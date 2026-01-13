@@ -14,5 +14,10 @@ namespace Nukit.Clearance
         [Description("Force clearance without prompting.")]
         [DefaultValue(false)]
         public bool Force { get; init; } = false;
+
+        [Description("Runs a scan, without any effect.")]
+        [DefaultValue(false)]
+        [CommandOption("--dry-run")]
+        public bool DryRun { get; init; } = false;
     }
 }

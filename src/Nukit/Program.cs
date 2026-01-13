@@ -6,15 +6,13 @@ namespace Nukit
 {
     internal class Program
     {
-        
-
         static async Task<int> Main(string[] args)
         {
             try
             {
                 var reg = CreateTypeRegister();
                 var app = new CommandApp<Clearance.ClearanceCommand>(reg);
-                
+
                 app.Configure(c =>
                 {
                     c.PropagateExceptions()
@@ -34,13 +32,13 @@ namespace Nukit
 
         private static ITypeRegistrar CreateTypeRegister() => new TypeRegistrar(CreateServices());
 
-        private static IServiceCollection CreateServices() 
+        private static IServiceCollection CreateServices()
         {
             var result = new ServiceCollection();
 
             result.AddNugetClient()
                 .AddTransient<Console.IConsoleWriter, Console.ConsoleWriter>();
-            
+
             return result;
         }
     }
