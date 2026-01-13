@@ -6,30 +6,36 @@ namespace Nukit.FileSystem
     internal interface IFileFinder
     {
         IEnumerable<DirectoryInfo> FindBinaryDirectories(string path);
+        IEnumerable<DirectoryInfo> FindObjectDirectories(string path);
     }
 
     internal class FileFinder(IFileSystem fs) : IFileFinder
     {
         private readonly Matcher _binMatcher = CreateBinMatcher();
-        
+        private readonly Matcher _objMatcher = CreateObjectMatcher();
+
         public IEnumerable<DirectoryInfo> FindBinaryDirectories(string path)
         {
             var dirs = fs.Directory.GetDirectories(path, "bin", SearchOption.AllDirectories);
 
-            return dirs.Where(IsBinaryMatch).Select(p => new DirectoryInfo(p));
+            return dirs.Where(d => IsDirectoryMatch(d, _binMatcher)).Select(p => new DirectoryInfo(p));
         }
 
-        private bool IsBinaryMatch(string path)
-        {            
-            var di = fs.DirectoryInfo.New(path);
+        public IEnumerable<DirectoryInfo> FindObjectDirectories(string path)
+        {
+            var dirs = fs.Directory.GetDirectories(path, "obj", SearchOption.AllDirectories);
 
+            return dirs.Where(d => IsDirectoryMatch(d, _objMatcher)).Select(p => new DirectoryInfo(p));
+        }
+                
+        private bool IsDirectoryMatch(string path, Matcher matcher)
+        {
+            var di = fs.DirectoryInfo.New(path);
             if (di.Exists)
             {
-                var wrapper = new Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoWrapper(new DirectoryInfo(path));                
+                var wrapper = new Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoWrapper(new DirectoryInfo(path));
 
-                var matches = _binMatcher.Execute(wrapper);
-
-                return matches.HasMatches;
+                return matcher.Execute(wrapper).HasMatches;
             }
 
             return false;
@@ -41,6 +47,12 @@ namespace Nukit.FileSystem
             result.AddInclude("**/*.dll");
             return result;
         }
-        // project.assets.json
+
+        private static Matcher CreateObjectMatcher()
+        {
+            var result = new Matcher();
+            result.AddInclude("**/project.assets.json");
+            return result;
+        }
     }
 }

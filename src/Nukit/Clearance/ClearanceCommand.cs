@@ -15,18 +15,13 @@ namespace Nukit.Clearance
             
             var purgeResult = new FileSystem.FilePurgeInfo();
             var root = settings.Path == "" ? "." : settings.Path; // TODO: reconcile to current directory
-                       
-            console.WriteLine($"Searching for 'bin' directories under {root}".Yellow());
+                                   
             var result = PurgeBinaries(settings.DryRun, root);
-            purgeResult = purgeResult with
-            {
-                Found = purgeResult.Found + result.Found,
-                Deleted = purgeResult.Deleted + result.Deleted,
-                Errors = purgeResult.Errors + result.Errors
-            };
+            purgeResult = purgeResult.Add(result);
 
-            // TODO: obj directories
-
+            result = PurgeObjects(settings.DryRun, root);
+            purgeResult = purgeResult.Add(result);
+                        
             console.WriteLine("Purge Summary:".Yellow());
             console.WriteLine($"  Found:   {purgeResult.Found}".Cyan());
             console.WriteLine($"  Deleted: {purgeResult.Deleted}".Green());
@@ -37,7 +32,18 @@ namespace Nukit.Clearance
 
         private FilePurgeInfo PurgeBinaries(bool dryRun, string root)
         {
+            console.WriteLine($"Searching for 'bin' directories under {root}".Yellow());
+
             var binDirs = fileFinder.FindBinaryDirectories(root);
+
+            return PurgeDirectories(dryRun, binDirs);
+        }
+
+        private FilePurgeInfo PurgeObjects(bool dryRun, string root)
+        {
+            console.WriteLine($"Searching for 'obj' directories under {root}".Yellow());
+
+            var binDirs = fileFinder.FindObjectDirectories(root);
 
             return PurgeDirectories(dryRun, binDirs);
         }

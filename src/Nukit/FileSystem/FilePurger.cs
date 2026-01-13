@@ -1,15 +1,7 @@
 ﻿using System.IO.Abstractions;
 
 namespace Nukit.FileSystem
-{
-    internal record FilePurgeInfo
-    {
-        public DirectoryInfo Directory { get; init; }
-        public int Found { get; init; }
-        public int Deleted { get; init; }
-        public int Errors { get; init; }
-    }
-
+{    
     internal interface IFilePurger
     {
         FilePurgeInfo Delete(DirectoryInfo directory, bool dryRun);
@@ -43,7 +35,16 @@ namespace Nukit.FileSystem
                         }
                     }
                 }
-
+                
+                try
+                {
+                    fs.Directory.Delete(directory.FullName, true);
+                }
+                catch (Exception)
+                {
+                    // TODO: log?
+                    errors++;
+                }
             }
 
             return new FilePurgeInfo { Deleted = deleted, Found = found, Directory = directory, Errors = errors };
