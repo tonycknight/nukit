@@ -1,0 +1,29 @@
+name: "Scheduled SCA"
+
+permissions: # set permissions to principle of least privilege, codeql requires read permission to the repo content and PRs (if that option is set), and must have write permissions to security events in order to push results
+  actions: read
+  pull-requests: write
+  security-events: write
+  contents: write
+  checks: write
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  sca:
+    name: Scheduled SCA
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Dependency scan
+        uses: tonycknight/pkgchk-action@v1
+        with: 
+          scan-issues: true
+          scan-upgrades: true
+          config: pkgchk.config.yml
+          trace: true

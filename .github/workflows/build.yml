@@ -1,0 +1,190 @@
+name: Build & Release
+
+permissions:
+  actions: read
+  pull-requests: write
+  security-events: write
+  contents: write
+  checks: write
+
+on:
+  push:
+    paths-ignore:
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/dependabot.yml'
+      - '.github/CODEOWNERS'
+      - '**/*.md'
+  workflow_dispatch:
+  release:
+    types: [released]
+
+env:
+  package-version-number: 0.3.${{ github.run_number }}
+  nuget-package-name: nukit.nupkg
+  isrelease: ${{ github.event_name == 'release' && github.event.action == 'released' && github.ref == 'refs/heads/main' }}
+
+jobs:
+  variables:
+    name: Setup variables
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set preview package version
+        if: ${{ env.isrelease }} == 'false'
+        run: echo "package-version-number=${{ env.package-version-number }}-preview" >> $GITHUB_ENV
+
+      - run: echo "Building package ${{ env.package-version-number }}" >> $GITHUB_STEP_SUMMARY
+
+    outputs:
+      isrelease: ${{ env.isrelease }}
+      package-version-number: ${{ env.package-version-number }}
+      nuget-package-name: ${{ env.nuget-package-name }}
+
+  sca:
+    name: Check SCA
+    runs-on: ubuntu-latest
+    needs: [ variables ]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Dependency scan
+        uses: tonycknight/pkgchk-action@v1
+        with: 
+          scan-issues: true
+          scan-upgrades: true
+          config: pkgchk.config.yml
+          trace: true         
+          
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: [ variables ]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        
+      - name: Tool restore
+        run: dotnet tool restore
+      
+      - name: App restore
+        run: dotnet restore
+
+      - name: Run Tests
+        run: dotnet test -c Debug --filter FullyQualifiedName!~integration /p:CollectCoverage=true /p:CoverletOutput=./TestResults/coverage.info /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test_results.trx" 
+      
+      - name: Unit test results
+        uses: dorny/test-reporter@v2
+        if: always()
+        with:
+          name: unit test results
+          path: ${{ github.workspace }}/tests/Nukit.Tests.Unit/TestResults/test_results.trx
+          reporter: dotnet-trx
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Consolidate code coverage
+        run: dotnet reportgenerator -reports:./tests/**/coverage.net10.0.info -targetdir:./reports/codecoverage -reporttypes:Html,Cobertura
+
+      - name: Code coverage results
+        uses: 5monkeys/cobertura-action@v14
+        with:
+          path: ${{ github.workspace }}/reports/codecoverage/Cobertura.xml
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          minimum_coverage: 1
+          fail_below_threshold: true
+          show_line: true
+          show_branch: true
+          show_missing: true
+          show_class_names: true
+          link_missing_lines: true
+          report_name: code coverage results
+
+      - name: Archive Code coverage
+        uses: actions/upload-artifact@v6
+        with:
+          name: codecoverage
+          path: ./reports/codecoverage/*.*
+
+  integration-tests:
+    name: Integration Tests
+    needs: [ variables ]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]        
+    runs-on: ${{ matrix.os }}
+    env:
+      VSTEST_CONNECTION_TIMEOUT: 300
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        
+      - name: Tool restore
+        run: dotnet tool restore
+      
+      - name: App restore
+        run: dotnet restore
+
+      - name: Run Tests
+        run: dotnet test -c Release --filter FullyQualifiedName~integration --logger "trx;LogFileName=test_results.trx" -v n
+
+      - name: Integration test results
+        uses: dorny/test-reporter@v2
+        if: always()
+        with:
+          name: integration test results - ${{ matrix.os }}
+          path: ${{ github.workspace }}/tests/Nukit.Tests.Integration/TestResults/test_results.trx
+          reporter: dotnet-trx
+          path-replace-backslashes: true
+          token: ${{ secrets.GITHUB_TOKEN }}          
+  
+  nuget-package:
+    name: Nuget packaging
+    runs-on: ubuntu-latest
+    needs: [ variables ]
+    
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+          
+      - name: Tool restore
+        run: dotnet tool restore
+      
+      - name: App restore
+        run: dotnet restore
+        
+      - name: Build package 
+        run: dotnet pack -c Release -o ./package/ -p:PackageVersion=${{ needs.variables.outputs.package-version-number }} -p:Version=${{ needs.variables.outputs.package-version-number }}
+
+      - name: Archive tool nupkg
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ needs.variables.outputs.nuget-package-name }}
+          path: ./package/*.nupkg
+
+  nuget-release:
+    name: Push to Nuget
+    runs-on: ubuntu-latest
+    needs:   [ variables, sca, unit-tests, integration-tests, nuget-package ]
+    if: ${{ needs.variables.outputs.isrelease == 'true' }}
+    
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+                  
+      - name: Download package
+        uses: actions/download-artifact@v7
+        with:
+          name: ${{ needs.variables.outputs.nuget-package-name }}
+          path: ${{ github.workspace }}/artifacts      
+
+      - name: Push nuget package
+        run: dotnet nuget push "artifacts/*.nupkg"  --api-key ${{ secrets.NUGET_PAT }} --source "nuget.org"
