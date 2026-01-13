@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace Nukit.Clearance
@@ -6,8 +7,8 @@ namespace Nukit.Clearance
     internal class ClearanceSettings : CommandSettings
     {
 
-        [CommandArgument(0, "<path>")]
-        [Description("The path to clear.")]
+        [CommandArgument(0, "[path]")]
+        [Description("The path to clear. Optional.")]
         public string Path { get; init; } = "";
 
         [CommandOption("-f|--force")]
@@ -19,5 +20,10 @@ namespace Nukit.Clearance
         [DefaultValue(false)]
         [CommandOption("--dry-run")]
         public bool DryRun { get; init; } = false;
+
+        public override ValidationResult Validate()
+        {
+            return base.Validate();
+        }
     }
 }

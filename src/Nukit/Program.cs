@@ -37,6 +37,9 @@ namespace Nukit
             var result = new ServiceCollection();
 
             result.AddNugetClient()
+                .AddTransient<System.IO.Abstractions.IFileSystem, System.IO.Abstractions.FileSystem>()
+                .AddTransient<FileSystem.IFileFinder, FileSystem.FileFinder>()
+                .AddTransient<FileSystem.IFilePurger, FileSystem.FilePurger>()
                 .AddTransient<Console.IConsoleWriter, Console.ConsoleWriter>();
 
             return result;
