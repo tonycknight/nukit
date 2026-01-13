@@ -5,21 +5,21 @@ namespace Nukit.FileSystem
 {
     internal interface IFileFinder
     {
-        IEnumerable<DirectoryInfo> FindDirectories(string path, string searchPattern);
+        IEnumerable<DirectoryInfo> FindBinaryDirectories(string path);
     }
 
     internal class FileFinder(IFileSystem fs) : IFileFinder
     {
-        private readonly Matcher _matcher = CreateMatcher();
+        private readonly Matcher _binMatcher = CreateBinMatcher();
         
-        public IEnumerable<DirectoryInfo> FindDirectories(string path, string searchPattern)
+        public IEnumerable<DirectoryInfo> FindBinaryDirectories(string path)
         {
-            var dirs = fs.Directory.GetDirectories(path, searchPattern, SearchOption.AllDirectories);
+            var dirs = fs.Directory.GetDirectories(path, "bin", SearchOption.AllDirectories);
 
-            return dirs.Where(IsMatch).Select(p => new DirectoryInfo(p));
+            return dirs.Where(IsBinaryMatch).Select(p => new DirectoryInfo(p));
         }
 
-        private bool IsMatch(string path)
+        private bool IsBinaryMatch(string path)
         {            
             var di = fs.DirectoryInfo.New(path);
 
@@ -27,7 +27,7 @@ namespace Nukit.FileSystem
             {
                 var wrapper = new Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoWrapper(new DirectoryInfo(path));                
 
-                var matches = _matcher.Execute(wrapper);
+                var matches = _binMatcher.Execute(wrapper);
 
                 return matches.HasMatches;
             }
@@ -35,11 +35,12 @@ namespace Nukit.FileSystem
             return false;
         }
 
-        private static Matcher CreateMatcher()
+        private static Matcher CreateBinMatcher()
         {
             var result = new Matcher();
             result.AddInclude("**/*.dll");
             return result;
         }
+        // project.assets.json
     }
 }

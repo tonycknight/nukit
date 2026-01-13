@@ -1,4 +1,5 @@
-﻿using NuGet.Configuration;
+﻿using System.Reflection;
+using NuGet.Configuration;
 using Nukit.Console;
 using Nukit.FileSystem;
 using Spectre.Console.Cli;
@@ -16,7 +17,7 @@ namespace Nukit.Clearance
             var root = settings.Path == "" ? "." : settings.Path; // TODO: reconcile to current directory
                        
             console.WriteLine($"Searching for 'bin' directories under {root}".Yellow());
-            var result = Purge(settings.DryRun, root, "bin");
+            var result = PurgeBinaries(settings.DryRun, root);
             purgeResult = purgeResult with
             {
                 Found = purgeResult.Found + result.Found,
@@ -34,15 +35,22 @@ namespace Nukit.Clearance
             return true.ToTaskResult();
         }
 
-        private FilePurgeInfo Purge(bool dryRun, string root, string pattern)
+        private FilePurgeInfo PurgeBinaries(bool dryRun, string root)
+        {
+            var binDirs = fileFinder.FindBinaryDirectories(root);
+
+            return PurgeDirectories(dryRun, binDirs);
+        }
+
+        private FilePurgeInfo PurgeDirectories(bool dryRun, IEnumerable<DirectoryInfo> directories)
         {
             var purgeResult = new FileSystem.FilePurgeInfo();
-            var binDirs = fileFinder.FindDirectories(root, "bin");
-            foreach (var binDir in binDirs)
-            {
-                console.Write($"Deleting directory {binDir.FullName.Cyan()}...");
 
-                var result = purger.Delete(binDir, dryRun);
+            foreach (var directory in directories)
+            {
+                console.Write($"Deleting directory {directory.FullName.Cyan()}...");
+
+                var result = purger.Delete(directory, dryRun);
 
                 var report = GetLineReport(result);
 
