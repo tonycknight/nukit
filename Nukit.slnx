@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/Nukit/Nukit.csproj" />
+  <Project Path="test/Nukit.Tests.Unit/Nukit.Tests.Unit.csproj" />
+</Solution>
