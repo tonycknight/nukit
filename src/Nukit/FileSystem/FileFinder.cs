@@ -39,7 +39,7 @@ namespace Nukit.FileSystem
         {
             var matcher = new Matcher();
             matcher.AddInclude(pattern);
-            
+
             return GetDirectoryMatches(path, matcher).Select(p => new DirectoryInfo(p));
         }
 
