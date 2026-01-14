@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Nukit.Console;
 using Spectre.Console.Cli;
 using Tk.Nuget;
 
@@ -15,7 +16,7 @@ namespace Nukit
             try
             {
                 var reg = CreateTypeRegister();
-                var app = new CommandApp<Clearance.ClearanceCommand>(reg).WithDescription(Program.GetDescription());
+                var app = new CommandApp<Clearance.ClearanceCommand>(reg).WithDescription($"{Program.GetDescription()} {Program.GetProjectUrl()?.Italic() ?? String.Empty}");
 
                 app.Configure(c =>
                 {

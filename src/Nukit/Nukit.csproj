@@ -13,7 +13,7 @@
     <PackageId>nukit</PackageId>
     <RepositoryUrl>https://github.com/tonycknight/nukit</RepositoryUrl>
     <PackageProjectUrl>https://github.com/tonycknight/nukit</PackageProjectUrl>
-    <Description>A command line tool for nuking build clutter.</Description>
+    <Description>A command line tool to nuke build clutter.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
