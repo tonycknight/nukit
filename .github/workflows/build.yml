@@ -172,7 +172,7 @@ jobs:
     name: Push to Nuget
     runs-on: ubuntu-latest
     needs:   [ variables, sca, unit-tests, integration-tests, nuget-package ]
-    if: ${{ needs.variables.outputs.isrelease == 'true' }}
+    #if: ${{ needs.variables.outputs.isrelease == 'true' }}
     
     steps:
       - uses: actions/checkout@v6
