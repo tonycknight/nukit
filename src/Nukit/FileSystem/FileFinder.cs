@@ -9,14 +9,14 @@ namespace Nukit.FileSystem
         IEnumerable<DirectoryInfo> FindBinaryDirectories(string path);
         IEnumerable<DirectoryInfo> FindObjectDirectories(string path);
         IEnumerable<DirectoryInfo> FindTestResultDirectories(string path);
-        IEnumerable<DirectoryInfo> FindDirectories(string path, string pattern);
+        IEnumerable<DirectoryInfo> FindGlobbedDirectories(string path, string pattern);
     }
 
     internal class FileFinder(IFileSystem fs) : IFileFinder
     {
-        private readonly Matcher _binMatcher = CreateBinMatcher();
-        private readonly Matcher _objMatcher = CreateObjectMatcher();
-        private readonly Matcher _trxMatcher = CreateTestResultMatcher();
+        private readonly Matcher _binMatcher = CreateMatcher("**/*.dll");
+        private readonly Matcher _objMatcher = CreateMatcher("**/project.assets.json");
+        private readonly Matcher _trxMatcher = CreateMatcher("**/*.trx");
 
         public string Normalise(string path)
         {
@@ -29,40 +29,32 @@ namespace Nukit.FileSystem
             return Path.GetFullPath(path);
         }
 
-        public IEnumerable<DirectoryInfo> FindBinaryDirectories(string path)
-        {
-            var dirs = fs.Directory.GetDirectories(path, "bin", SearchOption.AllDirectories);
+        public IEnumerable<DirectoryInfo> FindBinaryDirectories(string path) => FindDirectories(path, "bin", _binMatcher);
 
-            return dirs.Where(d => IsDirectoryMatch(d, _binMatcher)).Select(p => new DirectoryInfo(p));
-        }
+        public IEnumerable<DirectoryInfo> FindObjectDirectories(string path) => FindDirectories(path, "obj", _objMatcher);
 
-        public IEnumerable<DirectoryInfo> FindObjectDirectories(string path)
-        {
-            var dirs = fs.Directory.GetDirectories(path, "obj", SearchOption.AllDirectories);
+        public IEnumerable<DirectoryInfo> FindTestResultDirectories(string path) => FindDirectories(path, "TestResults", _trxMatcher);
 
-            return dirs.Where(d => IsDirectoryMatch(d, _objMatcher)).Select(p => new DirectoryInfo(p));
-        }
-
-        public IEnumerable<DirectoryInfo> FindTestResultDirectories(string path)
-        {
-            var dirs = fs.Directory.GetDirectories(path, "TestResults", SearchOption.AllDirectories);
-
-            return dirs.Where(d => IsDirectoryMatch(d, _trxMatcher)).Select(p => new DirectoryInfo(p));
-        }
-
-        public IEnumerable<DirectoryInfo> FindDirectories(string path, string pattern)
+        public IEnumerable<DirectoryInfo> FindGlobbedDirectories(string path, string pattern)
         {
             var matcher = new Matcher();
             matcher.AddInclude(pattern);
-
+            
             return GetDirectoryMatches(path, matcher).Select(p => new DirectoryInfo(p));
+        }
+
+        private IEnumerable<DirectoryInfo> FindDirectories(string path, string pattern, Matcher matcher)
+        {
+            var dirs = fs.Directory.GetDirectories(path, pattern, SearchOption.AllDirectories);
+
+            return dirs.Where(d => IsDirectoryMatch(d, matcher)).Select(p => new DirectoryInfo(p));
         }
 
         private bool IsDirectoryMatch(string path, Matcher matcher)
         {
             if (fs.DirectoryInfo.New(path).Exists)
             {
-                var wrapper = new Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoWrapper(new DirectoryInfo(path));
+                var wrapper = CreateDirectoryWrapper(path);
 
                 return matcher.Execute(wrapper).HasMatches;
             }
@@ -74,7 +66,7 @@ namespace Nukit.FileSystem
         {
             if (fs.DirectoryInfo.New(path).Exists)
             {
-                var wrapper = new Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoWrapper(new DirectoryInfo(path));
+                var wrapper = CreateDirectoryWrapper(path);
 
                 return matcher.Execute(wrapper).Files
                     .Select(f => Path.Combine(path, f.Path))
@@ -86,25 +78,13 @@ namespace Nukit.FileSystem
             return Enumerable.Empty<string>();
         }
 
-        private static Matcher CreateBinMatcher()
+        private static Matcher CreateMatcher(string pattern)
         {
             var result = new Matcher();
-            result.AddInclude("**/*.dll");
+            result.AddInclude(pattern);
             return result;
         }
 
-        private static Matcher CreateObjectMatcher()
-        {
-            var result = new Matcher();
-            result.AddInclude("**/project.assets.json");
-            return result;
-        }
-
-        private static Matcher CreateTestResultMatcher()
-        {
-            var result = new Matcher();
-            result.AddInclude("**/*.trx");
-            return result;
-        }
+        private static Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoWrapper CreateDirectoryWrapper(string path) => new(new DirectoryInfo(path));
     }
 }

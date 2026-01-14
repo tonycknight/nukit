@@ -77,7 +77,7 @@ namespace Nukit.Clearance
         {
             console.WriteLine(GetDirectoryHeadline(root, pattern));
 
-            var dirs = fileFinder.FindDirectories(root, pattern);
+            var dirs = fileFinder.FindGlobbedDirectories(root, pattern);
 
             return PurgeDirectories(dryRun, dirs);
         }
