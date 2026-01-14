@@ -4,7 +4,10 @@ using Spectre.Console.Cli;
 
 namespace Nukit.Clearance
 {
-    internal class ClearanceCommand(IConsoleWriter console, Tk.Nuget.INugetClient nuget, IFileFinder fileFinder, IFilePurger purger) : BaseCommand<ClearanceSettings>(console, nuget)
+    internal class ClearanceCommand(IConsoleWriter console, Tk.Nuget.INugetClient nuget, IFileFinder fileFinder, IFilePurger purger)
+#pragma warning disable CS9107 // Parameter is captured into the state of the enclosing type and its value is also passed to the base constructor. The value might be captured by the base class as well.
+        : BaseCommand<ClearanceSettings>(console, nuget)
+#pragma warning restore CS9107 // Parameter is captured into the state of the enclosing type and its value is also passed to the base constructor. The value might be captured by the base class as well.
     {
         protected override Task<bool> ExecuteCommandAsync(CommandContext context, ClearanceSettings settings, CancellationToken cancellationToken)
         {
@@ -14,14 +17,23 @@ namespace Nukit.Clearance
             var purgeResult = new FileSystem.FilePurgeInfo();
             var root = fileFinder.Normalise(settings.Path == "" ? "." : settings.Path);
 
-            var result = PurgeBinaries(settings.DryRun, root);
-            purgeResult = purgeResult.Add(result);
+            if (settings.NukeBinaryDirectories)
+            {
+                var result = PurgeBinaries(settings.DryRun, root);
+                purgeResult = purgeResult.Add(result);
+            }
 
-            result = PurgeObjects(settings.DryRun, root);
-            purgeResult = purgeResult.Add(result);
+            if (settings.NukeObjectDirectories)
+            {
+                var result = PurgeObjects(settings.DryRun, root);
+                purgeResult = purgeResult.Add(result);
+            }
 
-            result = PurgeTestResults(settings.DryRun, root);
-            purgeResult = purgeResult.Add(result);
+            if (settings.NukeTestResultDirectories)
+            {
+                var result = PurgeTestResults(settings.DryRun, root);
+                purgeResult = purgeResult.Add(result);
+            }
 
             WriteSummary(purgeResult);
 

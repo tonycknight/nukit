@@ -21,9 +21,22 @@ namespace Nukit.Clearance
         [CommandOption("--dry-run")]
         public bool DryRun { get; init; } = false;
 
-        public override ValidationResult Validate()
-        {
-            return base.Validate();
-        }
+        [Description("Nuke binary directories.")]
+        [DefaultValue(true)]
+        [CommandOption("--bin")]
+        public bool NukeBinaryDirectories { get; init; } = true;
+
+        [Description("Nuke object directories.")]
+        [DefaultValue(true)]
+        [CommandOption("--obj")]
+        public bool NukeObjectDirectories { get; init; } = true;
+
+        [Description("Nuke test results.")]
+        [DefaultValue(false)]
+        [CommandOption("--trx")]
+        public bool NukeTestResultDirectories { get; init; } = false;
+
+        // TODO: needed?
+        public override ValidationResult Validate() => base.Validate();
     }
 }
