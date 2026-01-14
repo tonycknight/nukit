@@ -3,7 +3,7 @@ using Spectre.Console.Cli;
 
 namespace Nukit.Clearance
 {
-    internal class ClearanceSettings : CommandSettings
+    internal class ClearanceSettings : BaseCommandSettings
     {
 
         [CommandArgument(0, "[path]")]
