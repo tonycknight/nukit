@@ -34,5 +34,9 @@ namespace Nukit.Clearance
         [DefaultValue(false)]
         [CommandOption("--trx")]
         public bool NukeTestResultDirectories { get; init; } = false;
+
+        [Description("Nuke directories matching a glob pattern. Multiple patterns may be given.")]
+        [CommandOption("--glob", IsHidden = true)]
+        public string[] NukeGlobbedDirectories { get; init; } = [];
     }
 }

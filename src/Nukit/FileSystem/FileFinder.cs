@@ -9,6 +9,7 @@ namespace Nukit.FileSystem
         IEnumerable<DirectoryInfo> FindBinaryDirectories(string path);
         IEnumerable<DirectoryInfo> FindObjectDirectories(string path);
         IEnumerable<DirectoryInfo> FindTestResultDirectories(string path);
+        IEnumerable<DirectoryInfo> FindDirectories(string path, string pattern);
     }
 
     internal class FileFinder(IFileSystem fs) : IFileFinder
@@ -49,6 +50,14 @@ namespace Nukit.FileSystem
             return dirs.Where(d => IsDirectoryMatch(d, _trxMatcher)).Select(p => new DirectoryInfo(p));
         }
 
+        public IEnumerable<DirectoryInfo> FindDirectories(string path, string pattern)
+        {
+            var matcher = new Matcher();
+            matcher.AddInclude(pattern);
+
+            return GetDirectoryMatches(path, matcher).Select(p => new DirectoryInfo(p));
+        }
+
         private bool IsDirectoryMatch(string path, Matcher matcher)
         {
             if (fs.DirectoryInfo.New(path).Exists)
@@ -59,6 +68,22 @@ namespace Nukit.FileSystem
             }
 
             return false;
+        }
+
+        private IEnumerable<string> GetDirectoryMatches(string path, Matcher matcher)
+        {
+            if (fs.DirectoryInfo.New(path).Exists)
+            {
+                var wrapper = new Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoWrapper(new DirectoryInfo(path));
+
+                return matcher.Execute(wrapper).Files
+                    .Select(f => Path.Combine(path, f.Path))
+                    .Select(f => Path.GetDirectoryName(f) ?? String.Empty)
+                    .Where(d => d != String.Empty)
+                    .Distinct();
+            }
+
+            return Enumerable.Empty<string>();
         }
 
         private static Matcher CreateBinMatcher()

@@ -35,6 +35,12 @@ namespace Nukit.Clearance
                 purgeResult = purgeResult.Add(result);
             }
 
+            foreach (var dirPattern in settings.NukeGlobbedDirectories.Coalesce())
+            {
+                var result = PurgeDirectories(settings.DryRun, root, dirPattern);
+                purgeResult = purgeResult.Add(result);
+            }
+
             WriteSummary(purgeResult);
 
             return (purgeResult.Errors.Count == 0).ToTaskResult();
@@ -65,6 +71,15 @@ namespace Nukit.Clearance
             var binDirs = fileFinder.FindTestResultDirectories(root);
 
             return PurgeDirectories(dryRun, binDirs);
+        }
+
+        private FilePurgeInfo PurgeDirectories(bool dryRun, string root, string pattern)
+        {
+            console.WriteLine($"Searching for '{pattern}' directories under ".Cyan() + root.CornflowerBlue());
+
+            var dirs = fileFinder.FindDirectories(root, pattern);
+
+            return PurgeDirectories(dryRun, dirs);
         }
 
         private FilePurgeInfo PurgeDirectories(bool dryRun, IEnumerable<DirectoryInfo> directories)
