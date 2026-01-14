@@ -78,7 +78,7 @@ namespace Nukit.Clearance
             }
 
             if (purgeResult.Found == 0)
-                console.WriteLine("None found.");
+                console.WriteLine("Nothing found.");
 
             return purgeResult;
         }
