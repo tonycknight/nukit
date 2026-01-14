@@ -1,10 +1,12 @@
-﻿using System.IO.Abstractions;
+﻿using System.IO;
+using System.IO.Abstractions;
 using Microsoft.Extensions.FileSystemGlobbing;
 
 namespace Nukit.FileSystem
 {
     internal interface IFileFinder
     {
+        string Normalise(string path);
         IEnumerable<DirectoryInfo> FindBinaryDirectories(string path);
         IEnumerable<DirectoryInfo> FindObjectDirectories(string path);
         IEnumerable<DirectoryInfo> FindTestResultDirectories(string path);
@@ -15,6 +17,17 @@ namespace Nukit.FileSystem
         private readonly Matcher _binMatcher = CreateBinMatcher();
         private readonly Matcher _objMatcher = CreateObjectMatcher();
         private readonly Matcher _trxMatcher = CreateTestResultMatcher();
+
+        public string Normalise(string path)        
+        {
+            if (!Path.IsPathRooted(path))
+            {
+                var wd = fs.Directory.GetCurrentDirectory();
+                path = Path.Combine(wd, path);
+                return Path.GetFullPath(path);
+            }
+            return Path.GetFullPath(path);
+        }
 
         public IEnumerable<DirectoryInfo> FindBinaryDirectories(string path)
         {

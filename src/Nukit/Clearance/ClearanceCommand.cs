@@ -12,7 +12,7 @@ namespace Nukit.Clearance
                 return false.ToTaskResult();
             
             var purgeResult = new FileSystem.FilePurgeInfo();
-            var root = settings.Path == "" ? "." : settings.Path; // TODO: reconcile to current directory
+            var root = fileFinder.Normalise(settings.Path == "" ? "." : settings.Path);
                                    
             var result = PurgeBinaries(settings.DryRun, root);
             purgeResult = purgeResult.Add(result);
