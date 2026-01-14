@@ -2,6 +2,9 @@
 using Spectre.Console.Cli;
 using Tk.Nuget;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Nukit.Tests.Unit")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Nukit.Tests.Integration")]
+
 namespace Nukit
 {
     internal class Program
