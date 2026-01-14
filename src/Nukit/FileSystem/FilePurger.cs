@@ -13,7 +13,7 @@ namespace Nukit.FileSystem
         {
             int found = 0;
             int deleted = 0;
-            int errors = 0;
+            var errors = new List<string>();
             if (directory.Exists)
             {
                 var files = fs.Directory.GetFiles(directory.FullName, "*", SearchOption.AllDirectories);
@@ -28,10 +28,9 @@ namespace Nukit.FileSystem
                             fs.File.Delete(file);
                             deleted++;
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // TODO: log?
-                            errors++;
+                            errors.Add(ex.Message);
                         }
                     }
                 }
@@ -40,10 +39,9 @@ namespace Nukit.FileSystem
                 {
                     fs.Directory.Delete(directory.FullName, true);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // TODO: log?
-                    errors++;
+                    errors.Add(ex.Message);
                 }
             }
 

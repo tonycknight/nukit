@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using NuGet.Configuration;
-using Nukit.Console;
+﻿using Nukit.Console;
 using Nukit.FileSystem;
 using Spectre.Console.Cli;
 
@@ -22,14 +20,14 @@ namespace Nukit.Clearance
             result = PurgeObjects(settings.DryRun, root);
             purgeResult = purgeResult.Add(result);
                         
-            console.WriteLine("Purge Summary:".Yellow());
-            console.WriteLine($"  Found:   {purgeResult.Found}".Cyan());
-            console.WriteLine($"  Deleted: {purgeResult.Deleted}".Green());
-            console.WriteLine($"  Errors:  {purgeResult.Errors}".Red());
+            result = PurgeTestResults(settings.DryRun, root);
+            purgeResult = purgeResult.Add(result);
 
-            return true.ToTaskResult();
+            WriteSummary(purgeResult);
+
+            return (purgeResult.Errors.Count == 0).ToTaskResult();
         }
-
+                
         private FilePurgeInfo PurgeBinaries(bool dryRun, string root)
         {
             console.WriteLine($"Searching for 'bin' directories under {root}".Yellow());
@@ -48,6 +46,15 @@ namespace Nukit.Clearance
             return PurgeDirectories(dryRun, binDirs);
         }
 
+        private FilePurgeInfo PurgeTestResults(bool dryRun, string root)
+        {
+            console.WriteLine($"Searching for 'TestResults' directories under {root}".Yellow());
+
+            var binDirs = fileFinder.FindTestResultDirectories(root);
+
+            return PurgeDirectories(dryRun, binDirs);
+        }
+
         private FilePurgeInfo PurgeDirectories(bool dryRun, IEnumerable<DirectoryInfo> directories)
         {
             var purgeResult = new FileSystem.FilePurgeInfo();
@@ -61,17 +68,34 @@ namespace Nukit.Clearance
                 var report = GetLineReport(result);
 
                 console.WriteLine(report);
-
-                purgeResult = purgeResult with
+                // TODO: any errors... enumerate
+                foreach (var error in result.Errors)
                 {
-                    Found = purgeResult.Found + result.Found,
-                    Deleted = purgeResult.Deleted + result.Deleted,
-                    Errors = purgeResult.Errors + result.Errors
-                };
+                    console.WriteLine(error.Red());
+                }
+
+                purgeResult = purgeResult.Add(result);
             }
+
+            if (purgeResult.Found == 0)
+                console.WriteLine("None found.");
 
             return purgeResult;
         }
+
+        private void WriteSummary(FilePurgeInfo result)
+        {
+            console.WriteLine("Nuke summary:".Yellow());            
+            var msg = result switch
+            {
+                { Errors.Count: > 0 } => $"Found: {result.Found.ToString().Cyan()} Deleted: {result.Deleted.ToString().Green()} Erros: {result.Errors.Count.ToString().Red()}",
+                { Deleted: 0 } => $"Found: {result.Found.ToString().Cyan()} Deleted: {result.Deleted.ToString().Yellow()} Erros: {result.Errors.Count.ToString().Yellow()}",
+                _ => $"Found: {result.Found.ToString().Cyan()} Deleted: {result.Deleted.ToString().Green()} Erros: {result.Errors.Count.ToString().Yellow()}",
+            };
+
+            console.WriteLine("  " + msg);
+        }
+
 
         private bool ConfirmPurge(ClearanceSettings settings)
         {
@@ -85,12 +109,12 @@ namespace Nukit.Clearance
         {
             var msg = result switch
             {
-                { Errors: > 0 } => "done.".Red(),
+                { Errors.Count: > 0 } => "done.".Red(),
                 { Deleted: > 0} => " done.".Green(),
                 _ => " done."
             };
 
-            var baseMsg = $" {result.Found.ToString().Cyan()}/{result.Deleted.ToString().Green()}/{result.Errors.ToString().Red()}";
+            var baseMsg = $" {result.Found.ToString().Cyan()}/{result.Deleted.ToString().Green()}/{result.Errors.Count.ToString().Red()}";
 
             return msg + baseMsg;
         }

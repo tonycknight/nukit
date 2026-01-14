@@ -7,12 +7,14 @@ namespace Nukit.FileSystem
     {
         IEnumerable<DirectoryInfo> FindBinaryDirectories(string path);
         IEnumerable<DirectoryInfo> FindObjectDirectories(string path);
+        IEnumerable<DirectoryInfo> FindTestResultDirectories(string path);
     }
 
     internal class FileFinder(IFileSystem fs) : IFileFinder
     {
         private readonly Matcher _binMatcher = CreateBinMatcher();
         private readonly Matcher _objMatcher = CreateObjectMatcher();
+        private readonly Matcher _trxMatcher = CreateTestResultMatcher();
 
         public IEnumerable<DirectoryInfo> FindBinaryDirectories(string path)
         {
@@ -27,7 +29,14 @@ namespace Nukit.FileSystem
 
             return dirs.Where(d => IsDirectoryMatch(d, _objMatcher)).Select(p => new DirectoryInfo(p));
         }
-                
+
+        public IEnumerable<DirectoryInfo> FindTestResultDirectories(string path)
+        {
+            var dirs = fs.Directory.GetDirectories(path, "TestResults", SearchOption.AllDirectories);
+
+            return dirs.Where(d => IsDirectoryMatch(d, _trxMatcher)).Select(p => new DirectoryInfo(p));
+        }
+
         private bool IsDirectoryMatch(string path, Matcher matcher)
         {
             var di = fs.DirectoryInfo.New(path);
@@ -52,6 +61,13 @@ namespace Nukit.FileSystem
         {
             var result = new Matcher();
             result.AddInclude("**/project.assets.json");
+            return result;
+        }
+
+        private static Matcher CreateTestResultMatcher()
+        {
+            var result = new Matcher();
+            result.AddInclude("**/*.trx");
             return result;
         }
     }

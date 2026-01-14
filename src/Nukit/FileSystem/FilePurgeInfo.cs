@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Nukit.FileSystem
+﻿namespace Nukit.FileSystem
 {
     internal record FilePurgeInfo
     {
-        public DirectoryInfo Directory { get; init; }
+        public DirectoryInfo? Directory { get; init; }
         public int Found { get; init; }
         public int Deleted { get; init; }
-        public int Errors { get; init; }
+        public List<string> Errors { get; init; } = new();
     }
 
     internal static class FilePurgeInfoExtensions
@@ -18,7 +14,7 @@ namespace Nukit.FileSystem
         {
             Found = value.Found + second.Found,
             Deleted = value.Deleted + second.Deleted,
-            Errors = value.Errors + second.Errors
+            Errors = value.Errors.Concat(second.Errors).ToList(),
         };
     }
 }
