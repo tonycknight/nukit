@@ -48,7 +48,7 @@ namespace Nukit.Clearance
 
         private FilePurgeInfo PurgeBinaries(bool dryRun, string root)
         {
-            console.WriteLine("Searching for 'bin' directories under ".Cyan() + root.CornflowerBlue());
+            console.WriteLine(GetDirectoryHeadline(root, "bin"));
 
             var binDirs = fileFinder.FindBinaryDirectories(root);
 
@@ -57,7 +57,7 @@ namespace Nukit.Clearance
 
         private FilePurgeInfo PurgeObjects(bool dryRun, string root)
         {
-            console.WriteLine("Searching for 'obj' directories under ".Cyan() + root.CornflowerBlue());
+            console.WriteLine(GetDirectoryHeadline(root, "obj"));
 
             var binDirs = fileFinder.FindObjectDirectories(root);
 
@@ -66,7 +66,7 @@ namespace Nukit.Clearance
 
         private FilePurgeInfo PurgeTestResults(bool dryRun, string root)
         {
-            console.WriteLine("Searching for 'TestResults' directories under ".Cyan() + root.CornflowerBlue());
+            console.WriteLine(GetDirectoryHeadline(root, "TestResults"));
 
             var binDirs = fileFinder.FindTestResultDirectories(root);
 
@@ -75,7 +75,7 @@ namespace Nukit.Clearance
 
         private FilePurgeInfo PurgeDirectories(bool dryRun, string root, string pattern)
         {
-            console.WriteLine($"Searching for '{pattern}' directories under ".Cyan() + root.CornflowerBlue());
+            console.WriteLine(GetDirectoryHeadline(root, pattern));
 
             var dirs = fileFinder.FindDirectories(root, pattern);
 
@@ -158,5 +158,7 @@ namespace Nukit.Clearance
 
             return msg + baseMsg;
         }
+
+        private string GetDirectoryHeadline(string path, string name) => $"Searching for '{name.Cyan()}' directories under {path.CornflowerBlue()}";
     }
 }
