@@ -88,7 +88,7 @@ namespace Nukit.Clearance
 
             foreach (var directory in directories)
             {
-                console.Write($"Deleting directory {directory.FullName.Cyan()}...");
+                console.Write($"Deleting directory {directory.FullName.Cyan()}...".Indent(2));
 
                 var result = purger.Delete(directory, dryRun);
 
@@ -98,14 +98,14 @@ namespace Nukit.Clearance
 
                 foreach (var error in result.Errors)
                 {
-                    console.WriteLine(error.Red());
+                    console.WriteLine(error.Red().Indent(2));
                 }
 
                 purgeResult = purgeResult.Add(result);
             }
 
             if (purgeResult.Found == 0)
-                console.WriteLine("Nothing found.");
+                console.WriteLine("Nothing found.".Indent(2));
 
             return purgeResult;
         }
@@ -151,7 +151,7 @@ namespace Nukit.Clearance
             };
 
             var found = result.Found.ToString().Cyan();
-            var deleted = result.Deleted.ToString().Green();
+            var deleted = result.Deleted > 0 ? result.Deleted.ToString().Green() : result.Deleted.ToString().Yellow();
             var errors = result.Errors.Count > 0 ? result.Errors.Count.ToString().Red() : result.Errors.Count.ToString().Yellow();
 
             var baseMsg = $" {found}/{deleted}/{errors}";
@@ -159,6 +159,6 @@ namespace Nukit.Clearance
             return msg + baseMsg;
         }
 
-        private string GetDirectoryHeadline(string path, string name) => $"Searching for '{name.Cyan()}' directories under {path.CornflowerBlue()}";
+        private string GetDirectoryHeadline(string path, string name) => $"Searching for {name.Cyan()} directories under {path.CornflowerBlue()}";
     }
 }

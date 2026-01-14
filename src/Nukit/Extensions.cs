@@ -6,5 +6,7 @@
 
         public static IEnumerable<T> Coalesce<T>(this IEnumerable<T>? source) =>
             source ?? Enumerable.Empty<T>();
+
+        public static string Indent(this string value, int chars) => $"{new string(' ', chars)}{value}";
     }
 }
