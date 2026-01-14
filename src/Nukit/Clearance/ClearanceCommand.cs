@@ -30,7 +30,7 @@ namespace Nukit.Clearance
                 
         private FilePurgeInfo PurgeBinaries(bool dryRun, string root)
         {
-            console.WriteLine($"Searching for 'bin' directories under {root}".Yellow());
+            console.WriteLine("Searching for 'bin' directories under ".Cyan() + root.CornflowerBlue());
 
             var binDirs = fileFinder.FindBinaryDirectories(root);
 
@@ -39,7 +39,7 @@ namespace Nukit.Clearance
 
         private FilePurgeInfo PurgeObjects(bool dryRun, string root)
         {
-            console.WriteLine($"Searching for 'obj' directories under {root}".Yellow());
+            console.WriteLine("Searching for 'obj' directories under ".Cyan() + root.CornflowerBlue());
 
             var binDirs = fileFinder.FindObjectDirectories(root);
 
@@ -48,7 +48,7 @@ namespace Nukit.Clearance
 
         private FilePurgeInfo PurgeTestResults(bool dryRun, string root)
         {
-            console.WriteLine($"Searching for 'TestResults' directories under {root}".Yellow());
+            console.WriteLine("Searching for 'TestResults' directories under ".Cyan() + root.CornflowerBlue());
 
             var binDirs = fileFinder.FindTestResultDirectories(root);
 
