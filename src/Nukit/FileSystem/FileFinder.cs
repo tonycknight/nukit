@@ -51,8 +51,7 @@ namespace Nukit.FileSystem
 
         private bool IsDirectoryMatch(string path, Matcher matcher)
         {
-            var di = fs.DirectoryInfo.New(path);
-            if (di.Exists)
+            if (fs.DirectoryInfo.New(path).Exists)
             {
                 var wrapper = new Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoWrapper(new DirectoryInfo(path));
 
