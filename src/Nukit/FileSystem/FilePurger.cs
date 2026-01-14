@@ -1,7 +1,7 @@
 ﻿using System.IO.Abstractions;
 
 namespace Nukit.FileSystem
-{    
+{
     internal interface IFilePurger
     {
         FilePurgeInfo Delete(DirectoryInfo directory, bool dryRun);

@@ -10,18 +10,18 @@ namespace Nukit
         public override async Task<int> ExecuteAsync(CommandContext context, T settings, CancellationToken cancellationToken)
         {
             await ShowBannerAsync();
-            
+
             var result = await ExecuteCommandAsync(context, settings, cancellationToken);
 
             return result ? 0 : 1;
         }
-                
+
         private async Task ShowBannerAsync()
-        {            
+        {
             var vsn = GetVersion();
             console.WriteLine("Nukit".Green() + (vsn != null ? $" version {vsn}".Yellow() : ""));
             console.WriteLine("https://github.com/tonycknight/nukit".Italic());
-            
+
             console.WriteLine("Thank you for using my software.".Grey().Italic());
             console.WriteLine("");
 
@@ -33,7 +33,7 @@ namespace Nukit
             var version = GetVersion() ?? "";
             var result = await nuget.GetUpgradeVersionAsync("Nukit", version, false);
 
-            if(result != null)
+            if (result != null)
             {
                 console.WriteLine($"An upgrade is available".Yellow().Italic());
                 console.WriteLine("");
@@ -42,7 +42,7 @@ namespace Nukit
 
         private string? GetVersion()
         {
-            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var assembly = Assembly.GetExecutingAssembly();
             var attribute = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
             return attribute?.InformationalVersion;
         }

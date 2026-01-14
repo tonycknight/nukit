@@ -10,16 +10,16 @@ namespace Nukit.Clearance
         {
             if (!ConfirmPurge(settings))
                 return false.ToTaskResult();
-            
+
             var purgeResult = new FileSystem.FilePurgeInfo();
             var root = fileFinder.Normalise(settings.Path == "" ? "." : settings.Path);
-                                   
+
             var result = PurgeBinaries(settings.DryRun, root);
             purgeResult = purgeResult.Add(result);
 
             result = PurgeObjects(settings.DryRun, root);
             purgeResult = purgeResult.Add(result);
-                        
+
             result = PurgeTestResults(settings.DryRun, root);
             purgeResult = purgeResult.Add(result);
 
@@ -27,7 +27,7 @@ namespace Nukit.Clearance
 
             return (purgeResult.Errors.Count == 0).ToTaskResult();
         }
-                
+
         private FilePurgeInfo PurgeBinaries(bool dryRun, string root)
         {
             console.WriteLine("Searching for 'bin' directories under ".Cyan() + root.CornflowerBlue());
@@ -68,7 +68,7 @@ namespace Nukit.Clearance
                 var report = GetLineReport(result);
 
                 console.WriteLine(report);
-                
+
                 foreach (var error in result.Errors)
                 {
                     console.WriteLine(error.Red());
@@ -90,7 +90,7 @@ namespace Nukit.Clearance
                 { Found: 0 } => $"Found: {result.Found.ToString().Yellow()}",
                 _ => $"Found: {result.Found.ToString().Cyan()}"
             };
-                
+
             var deleted = result switch
             {
                 { Deleted: 0 } => $"Deleted: {result.Deleted.ToString().Yellow()}",
@@ -98,7 +98,7 @@ namespace Nukit.Clearance
             };
             var errors = result switch
             {
-                { Errors.Count: > 0 } => $"Erros: {result.Errors.Count.ToString().Red()}",                
+                { Errors.Count: > 0 } => $"Erros: {result.Errors.Count.ToString().Red()}",
                 _ => $"Erros: {result.Errors.Count.ToString().Yellow()}",
             };
 
@@ -119,7 +119,7 @@ namespace Nukit.Clearance
             var msg = result switch
             {
                 { Errors.Count: > 0 } => "done.".Red(),
-                { Deleted: > 0} => " done.".Green(),
+                { Deleted: > 0 } => " done.".Green(),
                 _ => " done."
             };
 

@@ -18,7 +18,7 @@ namespace Nukit.FileSystem
         private readonly Matcher _objMatcher = CreateObjectMatcher();
         private readonly Matcher _trxMatcher = CreateTestResultMatcher();
 
-        public string Normalise(string path)        
+        public string Normalise(string path)
         {
             if (!Path.IsPathRooted(path))
             {
