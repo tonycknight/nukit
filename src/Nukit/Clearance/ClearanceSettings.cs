@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace Nukit.Clearance
@@ -35,8 +34,5 @@ namespace Nukit.Clearance
         [DefaultValue(false)]
         [CommandOption("--trx")]
         public bool NukeTestResultDirectories { get; init; } = false;
-
-        // TODO: needed?
-        public override ValidationResult Validate() => base.Validate();
     }
 }

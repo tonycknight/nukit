@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.IO.Abstractions;
+﻿using System.IO.Abstractions;
 using Microsoft.Extensions.FileSystemGlobbing;
 
 namespace Nukit.FileSystem

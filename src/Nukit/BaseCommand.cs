@@ -27,12 +27,12 @@ namespace Nukit
 
             await CheckForUpgradesAsync();
         }
-        
+
         private async Task CheckForUpgradesAsync()
         {
             var version = Program.GetVersion() ?? "";
             var result = await nuget.GetUpgradeVersionAsync("Nukit", version, false);
-            
+
             if (result != null)
             {
                 console.WriteLine($"An upgrade is available".Yellow().Italic());
