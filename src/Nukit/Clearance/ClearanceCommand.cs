@@ -68,7 +68,7 @@ namespace Nukit.Clearance
                 var report = GetLineReport(result);
 
                 console.WriteLine(report);
-                // TODO: any errors... enumerate
+                
                 foreach (var error in result.Errors)
                 {
                     console.WriteLine(error.Red());
@@ -85,15 +85,24 @@ namespace Nukit.Clearance
 
         private void WriteSummary(FilePurgeInfo result)
         {
-            console.WriteLine("Nuke summary:".Yellow());            
-            var msg = result switch
+            var found = result switch
             {
-                { Errors.Count: > 0 } => $"Found: {result.Found.ToString().Cyan()} Deleted: {result.Deleted.ToString().Green()} Erros: {result.Errors.Count.ToString().Red()}",
-                { Deleted: 0 } => $"Found: {result.Found.ToString().Cyan()} Deleted: {result.Deleted.ToString().Yellow()} Erros: {result.Errors.Count.ToString().Yellow()}",
-                _ => $"Found: {result.Found.ToString().Cyan()} Deleted: {result.Deleted.ToString().Green()} Erros: {result.Errors.Count.ToString().Yellow()}",
+                { Found: 0 } => $"Found: {result.Found.ToString().Yellow()}",
+                _ => $"Found: {result.Found.ToString().Cyan()}"
+            };
+                
+            var deleted = result switch
+            {
+                { Deleted: 0 } => $"Deleted: {result.Deleted.ToString().Yellow()}",
+                _ => $"Deleted: {result.Deleted.ToString().Green()}",
+            };
+            var errors = result switch
+            {
+                { Errors.Count: > 0 } => $"Erros: {result.Errors.Count.ToString().Red()}",                
+                _ => $"Erros: {result.Errors.Count.ToString().Yellow()}",
             };
 
-            console.WriteLine("  " + msg);
+            console.WriteLine("Nuke summary: ".Yellow() + $"{found} {deleted} {errors}");
         }
 
 

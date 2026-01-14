@@ -34,14 +34,17 @@ namespace Nukit.FileSystem
                         }
                     }
                 }
-                
-                try
+
+                if (!dryRun)
                 {
-                    fs.Directory.Delete(directory.FullName, true);
-                }
-                catch (Exception ex)
-                {
-                    errors.Add(ex.Message);
+                    try
+                    {
+                        fs.Directory.Delete(directory.FullName, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        errors.Add(ex.Message);
+                    }
                 }
             }
 
