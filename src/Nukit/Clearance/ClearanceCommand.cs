@@ -109,7 +109,7 @@ namespace Nukit.Clearance
         private bool ConfirmPurge(ClearanceSettings settings)
         {
             // TODO: if not force, then check IF NOT INTERACTIVE
-            if (settings.Force) return true;
+            if (settings.Force || settings.DryRun) return true;
 
             return console.Confirm("Confirm deletion?");
         }
