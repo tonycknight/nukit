@@ -147,7 +147,7 @@ namespace Nukit.Clearance
             {
                 { Errors.Count: > 0 } => "done.".Red(),
                 { Deleted: > 0 } => " done.".Green(),
-                _ => " done."
+                _ => " done.".Cyan()
             };
 
             var found = result.Found.ToString().Cyan();
