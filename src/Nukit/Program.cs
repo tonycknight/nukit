@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console.Cli;
 using Tk.Nuget;
 
@@ -14,7 +15,7 @@ namespace Nukit
             try
             {
                 var reg = CreateTypeRegister();
-                var app = new CommandApp<Clearance.ClearanceCommand>(reg);
+                var app = new CommandApp<Clearance.ClearanceCommand>(reg).WithDescription(Program.GetDescription());
 
                 app.Configure(c =>
                 {
@@ -35,17 +36,27 @@ namespace Nukit
 
         private static ITypeRegistrar CreateTypeRegister() => new TypeRegistrar(CreateServices());
 
-        private static IServiceCollection CreateServices()
-        {
-            var result = new ServiceCollection();
-
-            result.AddNugetClient()
+        private static IServiceCollection CreateServices() =>
+            new ServiceCollection()
+                .AddNugetClient()
                 .AddTransient<System.IO.Abstractions.IFileSystem, System.IO.Abstractions.FileSystem>()
                 .AddTransient<FileSystem.IFileFinder, FileSystem.FileFinder>()
                 .AddTransient<FileSystem.IFilePurger, FileSystem.FilePurger>()
                 .AddTransient<Console.IConsoleWriter, Console.ConsoleWriter>();
 
-            return result;
-        }
+        public static string? GetVersion() => Assembly.GetExecutingAssembly()
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+
+        public static string? GetProductName() => Assembly.GetExecutingAssembly()
+            .GetCustomAttribute<AssemblyProductAttribute>()?.Product;
+
+        public static string GetDescription() => Assembly.GetExecutingAssembly()
+            .GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description ?? "";
+
+        public static string? GetProjectUrl() => Assembly.GetExecutingAssembly()
+                .GetCustomAttributes<AssemblyMetadataAttribute>()
+                .Where(t => t.Key == "PackageProjectUrl" || t.Key == "RepositoryUrl")
+                .Select(t => t.Value)
+                .FirstOrDefault();
     }
 }
