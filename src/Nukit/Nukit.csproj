@@ -8,6 +8,12 @@
     <PackageId>Nukit</PackageId>
     <Author>Tony Knight</Author>
     <Copyright>Copyright (C) 2026 Tony Knight</Copyright>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>nukit</ToolCommandName>
+    <PackageId>nukit</PackageId>
+    <RepositoryUrl>https://github.com/tonycknight/nukit</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/tonycknight/nukit</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
