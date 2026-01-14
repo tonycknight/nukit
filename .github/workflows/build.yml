@@ -80,12 +80,12 @@ jobs:
         if: always()
         with:
           name: unit test results
-          path: ${{ github.workspace }}/tests/Nukit.Tests.Unit/TestResults/test_results.trx
+          path: ${{ github.workspace }}/test/Nukit.Tests.Unit/TestResults/test_results.trx
           reporter: dotnet-trx
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Consolidate code coverage
-        run: dotnet reportgenerator -reports:./tests/**/coverage.net10.0.info -targetdir:./reports/codecoverage -reporttypes:Html,Cobertura
+        run: dotnet reportgenerator -reports:./test/**/coverage.info -targetdir:./reports/codecoverage -reporttypes:Html,Cobertura
 
       - name: Code coverage results
         uses: 5monkeys/cobertura-action@v14
@@ -137,7 +137,7 @@ jobs:
         if: always()
         with:
           name: integration test results - ${{ matrix.os }}
-          path: ${{ github.workspace }}/tests/Nukit.Tests.Integration/TestResults/test_results.trx
+          path: ${{ github.workspace }}/test/Nukit.Tests.Integration/TestResults/test_results.trx
           reporter: dotnet-trx
           path-replace-backslashes: true
           token: ${{ secrets.GITHUB_TOKEN }}          
