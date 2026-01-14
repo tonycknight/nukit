@@ -19,7 +19,7 @@ on:
     types: [released]
 
 env:
-  package-version-number: 0.3.${{ github.run_number }}
+  package-version-number: 0.1.${{ github.run_number }}
   nuget-package-name: nukit.nupkg
   isrelease: ${{ github.event_name == 'release' && github.event.action == 'released' && github.ref == 'refs/heads/main' }}
 
