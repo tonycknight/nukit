@@ -40,12 +40,9 @@ namespace Nukit
             }
         }
 
-        private string? GetVersion()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var attribute = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
-            return attribute?.InformationalVersion;
-        }
+        private string? GetVersion() => Assembly.GetExecutingAssembly()
+                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+                ?.InformationalVersion;
 
         protected abstract Task<bool> ExecuteCommandAsync(CommandContext context, T settings, CancellationToken cancellationToken);
     }
