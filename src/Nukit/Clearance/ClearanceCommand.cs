@@ -123,7 +123,11 @@ namespace Nukit.Clearance
                 _ => " done."
             };
 
-            var baseMsg = $" {result.Found.ToString().Cyan()}/{result.Deleted.ToString().Green()}/{result.Errors.Count.ToString().Red()}";
+            var found = result.Found.ToString().Cyan();
+            var deleted = result.Deleted.ToString().Green();
+            var errors = result.Errors.Count > 0 ? result.Errors.Count.ToString().Red() : result.Errors.Count.ToString().Yellow();
+
+            var baseMsg = $" {found}/{deleted}/{errors}";
 
             return msg + baseMsg;
         }
