@@ -4,7 +4,7 @@ using Spectre.Console.Cli;
 
 namespace Nukit.Clearance
 {
-    internal class ClearanceCommand(IConsoleWriter console, IFileFinder fileFinder, IFilePurger purger) : BaseCommand<ClearanceSettings>
+    internal class ClearanceCommand(IConsoleWriter console, Tk.Nuget.INugetClient nuget, IFileFinder fileFinder, IFilePurger purger) : BaseCommand<ClearanceSettings>(console, nuget)
     {
         protected override Task<bool> ExecuteCommandAsync(CommandContext context, ClearanceSettings settings, CancellationToken cancellationToken)
         {
