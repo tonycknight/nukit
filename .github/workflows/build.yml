@@ -9,8 +9,6 @@ permissions:
 
 on:
   push:
-    tags-ignore:
-      - '**'
     paths-ignore:
       - '.github/ISSUE_TEMPLATE/**'
       - '.github/dependabot.yml'
