@@ -29,11 +29,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set preview package version
-        if: ${{ env.isrelease }} == 'false'
+        if: ${{ env.isrelease == 'false' }}
         run: echo "package-version-number=0.0.${{ github.run_number }}-preview" >> $GITHUB_ENV
 
       - name: Set released package version
-        if: ${{ env.isrelease }} == 'true'
+        if: ${{ env.isrelease == 'true' }}
         run: echo "package-version-number=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
 
       - run: echo "Building package ${{ env.package-version-number }}" >> $GITHUB_STEP_SUMMARY
