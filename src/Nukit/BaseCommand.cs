@@ -36,7 +36,7 @@ namespace Nukit
 
             if (result != null)
             {
-                console.WriteLine($"An upgrade is available".Yellow().Italic());
+                console.WriteLine(($"An upgrade is available".Yellow() + $" - check https://www.nuget.org/packages/{Program.GetProductName()}").Italic());
                 console.WriteLine("");
             }
         }
