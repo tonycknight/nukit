@@ -21,7 +21,7 @@ on:
 env:
   package-version-number: 0.0.${{ github.run_number }}
   nuget-package-name: nukit.nupkg
-  isrelease: ${{ github.event_name == 'release' && github.event.action == 'released' && github.ref == 'refs/heads/main' }}
+  isrelease: ${{ github.event_name == 'release' && github.event.action == 'released' }}
 
 jobs:
   variables:
