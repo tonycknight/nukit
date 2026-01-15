@@ -15,5 +15,25 @@ namespace Nukit.Tests.Unit
 
             return true;
         }
+
+        [Fact]
+        public void Coalesce_NullSequence_ReturnsEmpty() 
+        {
+            int[]? values = null;
+            var result = values.Coalesce();
+
+            result.ShouldBe(Enumerable.Empty<int>());
+        }
+
+        [Theory]
+        [InlineData([])]
+        [InlineData([1])]
+        [InlineData([1,2,3])]
+        public void Coalesce_NonNullSequence_ReturnsEmpty(params int[]? values)
+        {
+            var result = values.Coalesce();
+
+            result.ShouldBe(values);
+        }
     }
 }
