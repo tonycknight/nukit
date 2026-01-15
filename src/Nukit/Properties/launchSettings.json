@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Nukit": {
+      "commandName": "Project",
+      "commandLineArgs": "--dry-run true"
+    }
+  }
+}
