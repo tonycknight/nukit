@@ -19,7 +19,7 @@ on:
     types: [released]
 
 env:
-  package-version-number: 0.1.${{ github.run_number }}
+  package-version-number: 0.0.${{ github.run_number }}
   nuget-package-name: nukit.nupkg
   isrelease: ${{ github.event_name == 'release' && github.event.action == 'released' && github.ref == 'refs/heads/main' }}
 
@@ -30,7 +30,11 @@ jobs:
     steps:
       - name: Set preview package version
         if: ${{ env.isrelease }} == 'false'
-        run: echo "package-version-number=${{ env.package-version-number }}-preview" >> $GITHUB_ENV
+        run: echo "package-version-number=0.0.${{ github.run_number }}-preview" >> $GITHUB_ENV
+
+      - name: Set released package version
+        if: ${{ env.isrelease }} == 'true'
+        run: echo "package-version-number=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
 
       - run: echo "Building package ${{ env.package-version-number }}" >> $GITHUB_STEP_SUMMARY
 
@@ -172,7 +176,7 @@ jobs:
     name: Push to Nuget
     runs-on: ubuntu-latest
     needs:   [ variables, sca, unit-tests, integration-tests, nuget-package ]
-    #if: ${{ needs.variables.outputs.isrelease == 'true' }}
+    if: ${{ needs.variables.outputs.isrelease == 'true' }}
     
     steps:
       - uses: actions/checkout@v6
