@@ -152,25 +152,20 @@ namespace Nukit.Tests.Integration
         public static IEnumerable<string> GetFiles(this OutputDirectory outDir, bool recurse = true)
         {
             var pattern = recurse ? "**/*.*" : "*.*";
+
+            return outDir.GetFiles(pattern);
+        }
+
+        public static IEnumerable<string> GetBinaryFiles(this OutputDirectory outDir) => outDir.GetFiles("**/bin/**/*.*");
+        public static IEnumerable<string> GetObjectFiles(this OutputDirectory outDir) => outDir.GetFiles("**/obj/**/*.*");
+
+        public static IEnumerable<string> GetFiles(this OutputDirectory outDir, string pattern)
+        {
             var wrapper = outDir.Path.CreateDirectorWrapper();
 
             var matcher = new Matcher().AddInclude(pattern);
 
             return matcher.Execute(wrapper).Files.Select(m => m.Path);
-        }
-
-        public static void VerifyFiles(this OutputDirectory outDir, int binFileCount, int objFileCount)
-        {
-            var wrapper = outDir.Path.CreateDirectorWrapper();
-
-            var binMatcher = new Matcher().AddInclude("**/bin/**/*.*");
-            var objMatcher = new Matcher().AddInclude("**/obj/**/*.*");
-
-            var binFiles = binMatcher.Execute(wrapper).Files;
-            binFiles.Count().ShouldBe(binFileCount);
-
-            var objFiles = objMatcher.Execute(wrapper).Files;
-            objFiles.Count().ShouldBe(objFileCount);
         }
 
         public static bool ContainsSet<T>(this IEnumerable<T> values, IEnumerable<T> others, IEqualityComparer<T> comparer)
