@@ -2,12 +2,12 @@
 
 namespace Nukit.FileSystem
 {
-    internal interface IFilePurger
+    internal interface IDirectoryPurger
     {
         FilePurgeInfo Delete(string directory, bool dryRun);
     }
 
-    internal class FilePurger(IFileSystem fs) : IFilePurger
+    internal class DirectoryPurger(IFileSystem fs) : IDirectoryPurger
     {
         public FilePurgeInfo Delete(string directory, bool dryRun)
         {

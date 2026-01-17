@@ -4,7 +4,7 @@ using Shouldly;
 
 namespace Nukit.Tests.Unit.FileSystem
 {
-    public class FilePurgerTests
+    public class DirectoryPurgerTests
     {
         [Theory]
         [InlineData("c:\\")]
@@ -16,7 +16,7 @@ namespace Nukit.Tests.Unit.FileSystem
             var fs = TestUtils.CreateFileSystem()
                 .SetDirectoryExists(path, false);
 
-            var purger = new FilePurger(fs);
+            var purger = new DirectoryPurger(fs);
 
             var result = purger.Delete(path, false);
 
@@ -37,7 +37,7 @@ namespace Nukit.Tests.Unit.FileSystem
             var fs = TestUtils.CreateFileSystem()
                 .SetDirectoryExists(path, false);
 
-            var purger = new FilePurger(fs);
+            var purger = new DirectoryPurger(fs);
 
             var result = purger.Delete(path, true);
 
@@ -57,7 +57,7 @@ namespace Nukit.Tests.Unit.FileSystem
                 .SetDirectoryGetFiles(path, [])
                 .SetFileDelete(path, null);
 
-            var purger = new FilePurger(fs);
+            var purger = new DirectoryPurger(fs);
 
             var result = purger.Delete(path, false);
 
@@ -77,7 +77,7 @@ namespace Nukit.Tests.Unit.FileSystem
                 .SetDirectoryGetFiles(path, [])
                 .SetFileDelete(path, null);
 
-            var purger = new FilePurger(fs);
+            var purger = new DirectoryPurger(fs);
 
             var result = purger.Delete(path, true);
 
@@ -99,7 +99,7 @@ namespace Nukit.Tests.Unit.FileSystem
                 .SetDirectoryGetFiles(path, files)
                 .SetFileDelete(path, null);
 
-            var purger = new FilePurger(fs);
+            var purger = new DirectoryPurger(fs);
 
             var result = purger.Delete(path, false);
 
@@ -123,7 +123,7 @@ namespace Nukit.Tests.Unit.FileSystem
                 .SetDirectoryGetFiles(path, files)
                 .SetFileDelete(path, null);
 
-            var purger = new FilePurger(fs);
+            var purger = new DirectoryPurger(fs);
 
             var result = purger.Delete(path, true);
 
@@ -147,7 +147,7 @@ namespace Nukit.Tests.Unit.FileSystem
                 .SetDirectoryGetFiles(path, files)
                 .SetFileDelete(path, new InvalidOperationException());
 
-            var purger = new FilePurger(fs);
+            var purger = new DirectoryPurger(fs);
 
             var result = purger.Delete(path, false);
 
@@ -172,7 +172,7 @@ namespace Nukit.Tests.Unit.FileSystem
                 .SetFileDelete(path, null)
                 .SetDirectoryDelete(path, new InvalidOperationException());
 
-            var purger = new FilePurger(fs);
+            var purger = new DirectoryPurger(fs);
 
             var result = purger.Delete(path, false);
 

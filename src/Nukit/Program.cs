@@ -43,7 +43,7 @@ namespace Nukit
                 .AddTransient<FileSystem.IDirectoryProvider, FileSystem.DirectoryProvider>()
                 .AddTransient<System.IO.Abstractions.IFileSystem, System.IO.Abstractions.FileSystem>()
                 .AddTransient<FileSystem.IDirectoryFinder, FileSystem.DirectoryFinder>()
-                .AddTransient<FileSystem.IFilePurger, FileSystem.FilePurger>()
+                .AddTransient<FileSystem.IDirectoryPurger, FileSystem.DirectoryPurger>()
                 .AddTransient<Console.IConsoleWriter, Console.ConsoleWriter>();
 
         public static string? GetVersion() => Assembly.GetExecutingAssembly()
