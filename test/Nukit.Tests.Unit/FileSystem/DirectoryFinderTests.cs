@@ -92,7 +92,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var dirs = TestUtils.CreateDirectoryProvider()
                 .SetDirectoryExists(path, true)
-                .SetDirectoryExists(subPath, true)
+                .SetDirectoryExists(subPath, false)
                 .SetGetDirectories(path, [], [])
                 .SetGetDirectories(subPath, [], []);
 
@@ -135,7 +135,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var dirs = TestUtils.CreateDirectoryProvider()
                 .SetDirectoryExists(path, true)
-                .SetDirectoryExists(subPath, true)
+                .SetDirectoryExists(subPath, false)
                 .SetGetDirectories(path, [], [])
                 .SetGetDirectories(subPath, [], []);
 
