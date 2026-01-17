@@ -6,6 +6,7 @@ using Tk.Nuget;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Nukit.Tests.Unit")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Nukit.Tests.Integration")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
 namespace Nukit
 {
@@ -40,9 +41,10 @@ namespace Nukit
         private static IServiceCollection CreateServices() =>
             new ServiceCollection()
                 .AddNugetClient()
+                .AddTransient<FileSystem.IDirectoryProvider, FileSystem.DirectoryProvider>()
                 .AddTransient<System.IO.Abstractions.IFileSystem, System.IO.Abstractions.FileSystem>()
-                .AddTransient<FileSystem.IFileFinder, FileSystem.FileFinder>()
-                .AddTransient<FileSystem.IFilePurger, FileSystem.FilePurger>()
+                .AddTransient<FileSystem.IDirectoryFinder, FileSystem.DirectoryFinder>()
+                .AddTransient<FileSystem.IDirectoryPurger, FileSystem.DirectoryPurger>()
                 .AddTransient<Console.IConsoleWriter, Console.ConsoleWriter>();
 
         public static string? GetVersion() => Assembly.GetExecutingAssembly()

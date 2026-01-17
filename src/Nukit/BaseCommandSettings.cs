@@ -7,7 +7,7 @@ namespace Nukit
     {
         [Description("Show or hide the application banner.")]
         [DefaultValue(false)]
-        [CommandOption("--no-banner")]
+        [CommandOption("--no-banner <true|false>")]
         public bool NoBanner { get; init; } = false;
     }
 }

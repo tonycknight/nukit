@@ -18,27 +18,11 @@ namespace Nukit
 
         private async Task ShowBannerAsync()
         {
-            var vsn = Program.GetVersion();
-            console.WriteLine(Program.GetProductName()?.Green() + (vsn != null ? $" version {vsn}".Yellow() : ""));
-            console.WriteLine(Program.GetDescription()?.Italic() ?? "");
-            console.WriteLine(Program.GetProjectUrl()?.Italic() ?? "");
+            var lines = ConsoleExtensions.GetBanner();
+            var upgrades = await nuget.GetUpgradeNotice();
 
-            console.WriteLine("Thank you for using my software.".Grey().Italic());
-            console.WriteLine("");
-
-            await CheckForUpgradesAsync();
-        }
-
-        private async Task CheckForUpgradesAsync()
-        {
-            var version = Program.GetVersion() ?? "";
-            var result = await nuget.GetUpgradeVersionAsync("Nukit", version, false);
-
-            if (result != null)
-            {
-                console.WriteLine($"An upgrade is available".Yellow().Italic());
-                console.WriteLine("");
-            }
+            console.WriteLines(lines);
+            console.WriteLines(upgrades);
         }
 
         protected abstract Task<bool> ExecuteCommandAsync(CommandContext context, T settings, CancellationToken cancellationToken);

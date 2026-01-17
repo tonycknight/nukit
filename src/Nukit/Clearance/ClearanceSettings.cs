@@ -10,33 +10,28 @@ namespace Nukit.Clearance
         [Description("The path to clear. Optional.")]
         public string Path { get; init; } = "";
 
-        [CommandOption("-f|--force")]
+        [CommandOption("-f|--force <true|false>")]
         [Description("Force clearance without prompting.")]
         [DefaultValue(false)]
         public bool Force { get; init; } = false;
 
         [Description("Runs a scan, without any effect.")]
         [DefaultValue(false)]
-        [CommandOption("--dry-run")]
+        [CommandOption("--dry-run <true|false>")]
         public bool DryRun { get; init; } = false;
 
         [Description("Nuke binary directories.")]
         [DefaultValue(true)]
-        [CommandOption("--bin")]
+        [CommandOption("--bin <true|false>")]
         public bool NukeBinaryDirectories { get; init; } = true;
 
         [Description("Nuke object directories.")]
         [DefaultValue(true)]
-        [CommandOption("--obj")]
+        [CommandOption("--obj <true|false>")]
         public bool NukeObjectDirectories { get; init; } = true;
 
-        [Description("Nuke test results.")]
-        [DefaultValue(false)]
-        [CommandOption("--trx")]
-        public bool NukeTestResultDirectories { get; init; } = false;
-
         [Description("Nuke directories matching a glob pattern. Multiple patterns may be given.")]
-        [CommandOption("--glob", IsHidden = true)]
+        [CommandOption("--glob <glob>")]
         public string[] NukeGlobbedDirectories { get; init; } = [];
     }
 }

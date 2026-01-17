@@ -25,20 +25,20 @@ DESCRIPTION:
 A command line tool to nuke build clutter. https://github.com/tonycknight/nukit
 
 USAGE:
-    Nukit.dll [path] [OPTIONS]
+    nukit.dll [path] [OPTIONS]
 
 ARGUMENTS:
     [path]    The path to clear. Optional.
 
 OPTIONS:
-                       DEFAULT
-    -h, --help                    Prints help information.
-    -v, --version                 Prints version information.
-        --no-banner               Show or hide the application banner.
-    -f, --force                   Force clearance without prompting.
-        --dry-run                 Runs a scan, without any effect.
-        --bin          True       Nuke binary directories.
-        --obj          True       Nuke object directories.
-        --trx                     Nuke test results.
+                                    DEFAULT
+    -h, --help                                 Prints help information.
+    -v, --version                              Prints version information.
+        --no-banner <TRUE|FALSE>               Show or hide the application banner.
+    -f, --force <TRUE|FALSE>                   Force clearance without prompting.
+        --dry-run <TRUE|FALSE>                 Runs a scan, without any effect.
+        --bin <TRUE|FALSE>          True       Nuke binary directories.
+        --obj <TRUE|FALSE>          True       Nuke object directories.
+        --glob <GLOB>                          Nuke directories matching a glob pattern. Multiple patterns may be given.  
 ```
 

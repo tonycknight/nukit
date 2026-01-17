@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console.Cli;
 
 namespace Nukit
 {
+    [ExcludeFromCodeCoverage]
     public sealed class TypeRegistrar(IServiceCollection services) : ITypeRegistrar
     {
         public ITypeResolver Build() => new TypeResolver(services.BuildServiceProvider());
@@ -14,6 +16,7 @@ namespace Nukit
         public void RegisterLazy(Type service, Func<object> factory) => services.AddSingleton(service, _ => factory());
     }
 
+    [ExcludeFromCodeCoverage]
     public sealed class TypeResolver(IServiceProvider provider) : ITypeResolver
     {
         public object? Resolve(Type? type) => type == null ? null : provider.GetService(type);
