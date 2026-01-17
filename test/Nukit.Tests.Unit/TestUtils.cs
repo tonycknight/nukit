@@ -6,7 +6,7 @@ namespace Nukit.Tests.Unit
 {
     internal static class TestUtils
     {
-        public static IFileSystem CreateFileSystem() 
+        public static IFileSystem CreateFileSystem()
         {
             var dir = Substitute.For<IDirectory>();
             var files = Substitute.For<IFile>();
@@ -14,7 +14,7 @@ namespace Nukit.Tests.Unit
             var fs = Substitute.For<IFileSystem>();
             fs.Directory.Returns(dir);
             fs.File.Returns(files);
-            
+
             return fs;
         }
 
@@ -41,7 +41,7 @@ namespace Nukit.Tests.Unit
 
         public static IFileSystem SetFileDelete(this IFileSystem fs, string path, Exception? exception = null)
         {
-            if(exception != null)
+            if (exception != null)
                 fs.File.When(f => f.Delete(Arg.Any<string>())).Throws(exception);
 
             return fs;

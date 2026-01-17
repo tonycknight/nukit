@@ -12,7 +12,7 @@ namespace Nukit.Tests.Unit.FileSystem
         [InlineData("/abc")]
         public void Delete_NoDryRun_DirectoryDoesNotExist_ReturnsEmpty(string path)
         {
-            
+
             var fs = TestUtils.CreateFileSystem()
                 .SetDirectoryExists(path, false);
 

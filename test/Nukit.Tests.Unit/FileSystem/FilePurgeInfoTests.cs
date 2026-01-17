@@ -9,7 +9,7 @@ namespace Nukit.Tests.Unit.FileSystem
         internal bool Add_Right_AddedTo_Left(FilePurgeInfo left, FilePurgeInfo right)
         {
             var r = left.Add(right);
-            
+
             return r.Found == (left.Found + right.Found)
                 && r.Deleted == (left.Deleted + right.Deleted)
                 && r.Errors.SequenceEqual(left.Errors.Concat(right.Errors));
@@ -33,11 +33,11 @@ namespace Nukit.Tests.Unit.FileSystem
                 return true;
 
             left = left with { Errors = leftErrors.Select(g => g.ToString()).ToList() };
-            right = right with {  Errors = rightErrors.Select(g => g.ToString()).ToList() };
+            right = right with { Errors = rightErrors.Select(g => g.ToString()).ToList() };
 
             var r1 = left.Add(right);
             var r2 = right.Add(left);
-                                                
+
             return !r1.Errors.SequenceEqual(r2.Errors.AsEnumerable());
         }
     }
