@@ -71,19 +71,17 @@ namespace Nukit.Clearance
 
             foreach (var directory in directories)
             {
-                console.Write($"Deleting directory {directory.Cyan()}...".Indent(2));
-
+                console.WriteDirectoryDeletionPrefix(directory);
+                
                 var result = purger.Delete(directory, dryRun);
 
-                console.WriteLineReport(result);
-                var lines = result.Errors.Select(e => e.Red().Indent(2));
-                console.WriteLines(lines);
+                console.WriteLineReport(result);                
 
                 purgeResult = purgeResult.Add(result);
             }
 
             if (purgeResult.Found == 0)
-                console.WriteLine("Nothing found.".Indent(2));
+                console.WriteEmptyResult();
 
             return purgeResult;
         }
