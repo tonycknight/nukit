@@ -14,7 +14,8 @@ namespace Nukit.FileSystem
             int found = 0;
             int deleted = 0;
             var errors = new List<string>();
-            if (directory.Exists)
+
+            if(fs.Directory.Exists(directory.FullName))
             {
                 var files = fs.Directory.GetFiles(directory.FullName, "*", SearchOption.AllDirectories);
 
