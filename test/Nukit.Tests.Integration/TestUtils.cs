@@ -168,16 +168,8 @@ namespace Nukit.Tests.Integration
             return matcher.Execute(wrapper).Files.Select(m => m.Path);
         }
 
-        public static bool ContainsSet<T>(this IEnumerable<T> values, IEnumerable<T> others, IEqualityComparer<T> comparer)
-        {
-            foreach (var other in others)
-            {
-                if (!values.Contains(other, comparer))
-                    return false;
-            }
-
-            return true;
-        }
+        public static bool ContainsSet<T>(this IEnumerable<T> values, IEnumerable<T> others, IEqualityComparer<T> comparer) =>
+            others.All(o => values.Contains(o, comparer));
 
         private static DirectoryInfoWrapper CreateDirectorWrapper(this string path) =>
             new DirectoryInfoWrapper(new DirectoryInfo(path));

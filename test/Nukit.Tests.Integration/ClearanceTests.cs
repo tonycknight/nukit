@@ -16,11 +16,11 @@ namespace Nukit.Tests.Integration
 
             var nukitResult = outDir.NukitCommand(true).Execute(output, true);
 
-            var postFiles = outDir.GetFiles(true).ToList();            
+            var postFiles = outDir.GetFiles(true).ToList();
             nukitResult.VerifyNukitSummary(postFiles.Count - sourceFiles.Count, 0, 0);
             outDir.GetBinaryFiles().Count().ShouldBeGreaterThan(0);
             outDir.GetObjectFiles().Count().ShouldBeGreaterThan(0);
-            
+
             postFiles.ContainsSet(files, StringComparer.InvariantCultureIgnoreCase).ShouldBeTrue();
         }
 
@@ -39,7 +39,7 @@ namespace Nukit.Tests.Integration
             var nukitResult = outDir.NukitCommand(false, nukeBin: true, nukeObj: false).Execute(output, true);
 
             var postFiles = outDir.GetFiles(true).ToList();
-            
+
             nukitResult.VerifyNukitSummary(binFiles.Count, binFiles.Count, 0);
             outDir.GetBinaryFiles().Count().ShouldBe(0);
             outDir.GetObjectFiles().Count().ShouldBeGreaterThan(0);
