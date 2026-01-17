@@ -12,7 +12,7 @@ namespace Nukit.Clearance
     {
         protected override Task<bool> ExecuteCommandAsync(CommandContext context, ClearanceSettings settings, CancellationToken cancellationToken)
         {
-            if (!ConfirmPurge(settings))
+            if (!console.ConfirmPurge(settings))
                 return false.ToTaskResult();
 
             var purgeResult = new FileSystem.FilePurgeInfo();
@@ -84,14 +84,6 @@ namespace Nukit.Clearance
                 console.WriteEmptyResult();
 
             return purgeResult;
-        }
-
-        private bool ConfirmPurge(ClearanceSettings settings)
-        {
-            // TODO: if not force, then check IF NOT INTERACTIVE
-            if (settings.Force || settings.DryRun) return true;
-
-            return console.Confirm("Confirm deletion?");
         }
     }
 }

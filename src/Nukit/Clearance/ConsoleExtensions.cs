@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Runtime.CompilerServices;
+﻿using System.Diagnostics.CodeAnalysis;
 using Nukit.Console;
 using Nukit.FileSystem;
 
@@ -7,6 +6,15 @@ namespace Nukit.Clearance
 {
     internal static class ConsoleExtensions
     {
+        [ExcludeFromCodeCoverage]
+        public static bool ConfirmPurge(this IConsoleWriter console, ClearanceSettings settings)
+        {
+            // TODO: if not force, then check IF NOT INTERACTIVE
+            if (settings.Force || settings.DryRun) return true;
+
+            return console.Confirm("Confirm deletion?");
+        }
+
         public static void WriteDirectoryHeadline(this IConsoleWriter console, string path, string name)
         {
             var line = $"Searching for {name.Cyan()} directories under {path.CornflowerBlue()}";
