@@ -15,7 +15,7 @@ namespace Nukit.FileSystem
     {
         private readonly Matcher _binMatcher = CreateMatcher("**/*.dll");
         private readonly Matcher _objMatcher = CreateMatcher("**/project.assets.json");
-        
+
         public string Normalise(string path)
         {
             if (!Path.IsPathRooted(path))

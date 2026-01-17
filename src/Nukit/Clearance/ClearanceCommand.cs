@@ -57,7 +57,7 @@ namespace Nukit.Clearance
 
             return PurgeDirectories(dryRun, binDirs);
         }
-                
+
         private FilePurgeInfo PurgeDirectories(bool dryRun, string root, string pattern)
         {
             console.WriteLine(GetDirectoryHeadline(root, pattern));

@@ -31,8 +31,6 @@ namespace Nukit.Tests.Integration
 
     internal static class TestUtils
     {
-        private const string httpPackage = "System.Net.Http";
-
         public static (string, string) CommandArgs(string cmd)
         {
             var idx = cmd.IndexOf(" ");
@@ -45,9 +43,6 @@ namespace Nukit.Tests.Integration
         public static OutputDirectory GetOutDir() => new OutputDirectory($"./testdata/{Guid.NewGuid().ToString().Replace("-", "")}");
 
         public static string CreateProjectCommand(this OutputDirectory outDir) => $"dotnet new classlib -o ./{outDir.Path} -n testproj";
-        public static string DotnetCleanCommand(this OutputDirectory outDir) => $"dotnet clean ./{outDir.Path}/testproj.csproj";
-
-        public static string AddGoodHttpPackageACommand(this OutputDirectory outDir) => $"dotnet add ./{outDir.Path}/testproj.csproj package {httpPackage} -v 4.3.4";
 
         public static string DotnetBuildCommand(this OutputDirectory outDir) => $"dotnet build ./{outDir.Path}/testproj.csproj";
 
