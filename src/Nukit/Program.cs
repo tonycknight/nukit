@@ -42,7 +42,7 @@ namespace Nukit
                 .AddNugetClient()
                 .AddTransient<FileSystem.IDirectoryProvider, FileSystem.DirectoryProvider>()
                 .AddTransient<System.IO.Abstractions.IFileSystem, System.IO.Abstractions.FileSystem>()
-                .AddTransient<FileSystem.IFileFinder, FileSystem.FileFinder>()
+                .AddTransient<FileSystem.IDirectoryFinder, FileSystem.DirectoryFinder>()
                 .AddTransient<FileSystem.IFilePurger, FileSystem.FilePurger>()
                 .AddTransient<Console.IConsoleWriter, Console.ConsoleWriter>();
 

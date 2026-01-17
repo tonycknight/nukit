@@ -27,9 +27,9 @@ namespace Nukit.FileSystem
         private Matcher Create(string[]? includedPaths, string[]? excludedPaths)
         {
             var result = new Matcher();
-            if(includedPaths != null)
+            if (includedPaths != null)
                 result.AddIncludePatterns(includedPaths);
-            if(excludedPaths != null)
+            if (excludedPaths != null)
                 result.AddExcludePatterns(excludedPaths);
             return result;
         }

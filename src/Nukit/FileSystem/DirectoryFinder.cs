@@ -1,28 +1,22 @@
 ﻿using System.IO.Abstractions;
-using Microsoft.Extensions.FileSystemGlobbing;
 
 namespace Nukit.FileSystem
 {
-    internal interface IFileFinder
+    internal interface IDirectoryFinder
     {
         IEnumerable<DirectoryInfo> FindBinaryDirectories(string path);
         IEnumerable<DirectoryInfo> FindObjectDirectories(string path);
         IEnumerable<DirectoryInfo> FindGlobbedDirectories(string path, string pattern);
     }
 
-    internal class FileFinder(IFileSystem fs, IDirectoryProvider directories) : IFileFinder
-    {        
+    internal class DirectoryFinder(IFileSystem fs, IDirectoryProvider directories) : IDirectoryFinder
+    {
         public IEnumerable<DirectoryInfo> FindBinaryDirectories(string path) => FindDirectories(path, "bin", ["**/*.dll"]);
 
         public IEnumerable<DirectoryInfo> FindObjectDirectories(string path) => FindDirectories(path, "obj", ["**/project.assets.json"]);
 
-        public IEnumerable<DirectoryInfo> FindGlobbedDirectories(string path, string pattern)
-        {
-            var matcher = new Matcher();
-            matcher.AddInclude(pattern);
-
-            return GetDirectoryMatches(path, [pattern]).Select(p => new DirectoryInfo(p));
-        }
+        public IEnumerable<DirectoryInfo> FindGlobbedDirectories(string path, string pattern) =>
+            GetDirectoryMatches(path, [pattern]).Select(p => new DirectoryInfo(p));
 
         private IEnumerable<DirectoryInfo> FindDirectories(string path, string pattern, string[] includedPaths)
         {
@@ -34,7 +28,7 @@ namespace Nukit.FileSystem
         private bool IsDirectoryMatch(string path, string[] includedPaths)
         {
             if (directories.DirectoryExists(path))
-            {                
+            {
                 return directories.GetDirectories(path, includedPaths, null).Any();
             }
 
@@ -44,7 +38,7 @@ namespace Nukit.FileSystem
         private IEnumerable<string> GetDirectoryMatches(string path, string[] includedPaths)
         {
             if (directories.DirectoryExists(path))
-            {                
+            {
                 return directories.GetDirectories(path, includedPaths, null)
                     .Select(p => Path.Combine(path, p))
                     .Select(f => Path.GetDirectoryName(f) ?? String.Empty)

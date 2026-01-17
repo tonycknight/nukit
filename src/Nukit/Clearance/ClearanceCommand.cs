@@ -5,7 +5,7 @@ using Tk.Extensions.Io;
 
 namespace Nukit.Clearance
 {
-    internal class ClearanceCommand(IConsoleWriter console, Tk.Nuget.INugetClient nuget, IFileFinder fileFinder, IFilePurger purger)
+    internal class ClearanceCommand(IConsoleWriter console, Tk.Nuget.INugetClient nuget, IDirectoryFinder fileFinder, IFilePurger purger)
 #pragma warning disable CS9107 // Parameter is captured into the state of the enclosing type and its value is also passed to the base constructor. The value might be captured by the base class as well.
         : BaseCommand<ClearanceSettings>(console, nuget)
 #pragma warning restore CS9107 // Parameter is captured into the state of the enclosing type and its value is also passed to the base constructor. The value might be captured by the base class as well.
