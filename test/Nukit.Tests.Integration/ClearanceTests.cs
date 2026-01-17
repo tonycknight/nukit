@@ -1,5 +1,4 @@
 ﻿using FsCheck.Xunit;
-using Shouldly;
 using Xunit.Abstractions;
 
 namespace Nukit.Tests.Integration
