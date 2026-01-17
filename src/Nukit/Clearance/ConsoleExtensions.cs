@@ -1,5 +1,4 @@
-﻿using System;
-using Nukit.Console;
+﻿using Nukit.Console;
 using Nukit.FileSystem;
 
 namespace Nukit.Clearance

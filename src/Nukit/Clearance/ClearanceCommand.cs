@@ -17,7 +17,7 @@ namespace Nukit.Clearance
 
             var purgeResult = new FileSystem.FilePurgeInfo();
             var root = (settings.Path == "" ? "." : settings.Path).ResolveWorkingPath();
-            
+
             if (settings.NukeBinaryDirectories)
             {
                 purgeResult = PurgeBinaries(settings.DryRun, root).Add(purgeResult);
@@ -41,7 +41,7 @@ namespace Nukit.Clearance
         private FilePurgeInfo PurgeBinaries(bool dryRun, string root)
         {
             console.WriteDirectoryHeadline(root, "bin");
-            
+
             var binDirs = fileFinder.FindBinaryDirectories(root);
 
             return PurgeDirectories(dryRun, binDirs);
@@ -74,7 +74,7 @@ namespace Nukit.Clearance
                 console.Write($"Deleting directory {directory.Cyan()}...".Indent(2));
 
                 var result = purger.Delete(directory, dryRun);
-                                
+
                 console.WriteLineReport(result);
                 var lines = result.Errors.Select(e => e.Red().Indent(2));
                 console.WriteLines(lines);

@@ -76,7 +76,7 @@ namespace Nukit.Tests.Unit
         }
 
         public static IDirectoryProvider SetGetDirectories(this IDirectoryProvider dirs, string path, string[] includedPatterns, string[] results)
-        {            
+        {
             dirs.GetDirectories(Arg.Is(path), Arg.Any<string[]?>(), Arg.Any<string[]?>())
                 .Returns(results);
             return dirs;
