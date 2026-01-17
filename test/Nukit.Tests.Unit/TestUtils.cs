@@ -19,6 +19,14 @@ namespace Nukit.Tests.Unit
             return fs;
         }
 
+        public static IFileSystem SetGetDirectories(this IFileSystem fs, string path, string[] result)
+        {
+            fs.Directory.GetDirectories(Arg.Is(path), Arg.Any<string>(), Arg.Is(SearchOption.AllDirectories))
+                .Returns(result);
+
+            return fs;
+        }
+
         public static IFileSystem SetCurrentDirectory(this IFileSystem fs, string path)
         {
             fs.Directory.GetCurrentDirectory().Returns(path);
