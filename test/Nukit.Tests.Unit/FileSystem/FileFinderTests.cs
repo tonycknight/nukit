@@ -14,7 +14,7 @@ namespace Nukit.Tests.Unit.FileSystem
             var fs = TestUtils.CreateFileSystem()
                 .SetDirectoryExists(path, true);
 
-            var finder = new FileFinder(fs);
+            //var finder = new FileFinder(fs);
                         
             // TODO: 
             //var results = finder.FindGlobbedDirectories(path, pattern).ToList();
