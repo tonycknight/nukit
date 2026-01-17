@@ -136,7 +136,7 @@ namespace Nukit.Tests.Integration
             var reportLine = result.OutLog.Split(Environment.NewLine, StringSplitOptions.TrimEntries)
                 .Single(s => s.StartsWith("Nuke summary: "));
 
-            var pattern = @"Nuke summary: Found:\s*(\d+)\s+Deleted:\s*(\d+)\s+Erros:\s*(\d+)";
+            var pattern = @"Nuke summary: Found:\s*(\d+)\s+Deleted:\s*(\d+)\s+Errors:\s*(\d+)";
             var match = Regex.Match(reportLine, pattern);
 
             int.Parse(match.Groups[1].Value).ShouldBe(found);
