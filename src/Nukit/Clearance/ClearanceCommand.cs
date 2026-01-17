@@ -29,12 +29,6 @@ namespace Nukit.Clearance
                 purgeResult = purgeResult.Add(result);
             }
 
-            if (settings.NukeTestResultDirectories)
-            {
-                var result = PurgeTestResults(settings.DryRun, root);
-                purgeResult = purgeResult.Add(result);
-            }
-
             foreach (var dirPattern in settings.NukeGlobbedDirectories.Coalesce())
             {
                 var result = PurgeDirectories(settings.DryRun, root, dirPattern);
@@ -63,16 +57,7 @@ namespace Nukit.Clearance
 
             return PurgeDirectories(dryRun, binDirs);
         }
-
-        private FilePurgeInfo PurgeTestResults(bool dryRun, string root)
-        {
-            console.WriteLine(GetDirectoryHeadline(root, "TestResults"));
-
-            var binDirs = fileFinder.FindTestResultDirectories(root);
-
-            return PurgeDirectories(dryRun, binDirs);
-        }
-
+                
         private FilePurgeInfo PurgeDirectories(bool dryRun, string root, string pattern)
         {
             console.WriteLine(GetDirectoryHeadline(root, pattern));

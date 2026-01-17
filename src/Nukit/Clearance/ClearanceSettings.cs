@@ -30,11 +30,6 @@ namespace Nukit.Clearance
         [CommandOption("--obj <true|false>")]
         public bool NukeObjectDirectories { get; init; } = true;
 
-        [Description("Nuke test results.")]
-        [DefaultValue(false)]
-        [CommandOption("--trx <true|false>")]
-        public bool NukeTestResultDirectories { get; init; } = false;
-
         [Description("Nuke directories matching a glob pattern. Multiple patterns may be given.")]
         [CommandOption("--glob <glob>")]
         public string[] NukeGlobbedDirectories { get; init; } = [];

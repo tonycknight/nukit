@@ -8,7 +8,6 @@ namespace Nukit.FileSystem
         string Normalise(string path);
         IEnumerable<DirectoryInfo> FindBinaryDirectories(string path);
         IEnumerable<DirectoryInfo> FindObjectDirectories(string path);
-        IEnumerable<DirectoryInfo> FindTestResultDirectories(string path);
         IEnumerable<DirectoryInfo> FindGlobbedDirectories(string path, string pattern);
     }
 
@@ -16,8 +15,7 @@ namespace Nukit.FileSystem
     {
         private readonly Matcher _binMatcher = CreateMatcher("**/*.dll");
         private readonly Matcher _objMatcher = CreateMatcher("**/project.assets.json");
-        private readonly Matcher _trxMatcher = CreateMatcher("**/*.trx");
-
+        
         public string Normalise(string path)
         {
             if (!Path.IsPathRooted(path))
@@ -32,8 +30,6 @@ namespace Nukit.FileSystem
         public IEnumerable<DirectoryInfo> FindBinaryDirectories(string path) => FindDirectories(path, "bin", _binMatcher);
 
         public IEnumerable<DirectoryInfo> FindObjectDirectories(string path) => FindDirectories(path, "obj", _objMatcher);
-
-        public IEnumerable<DirectoryInfo> FindTestResultDirectories(string path) => FindDirectories(path, "TestResults", _trxMatcher);
 
         public IEnumerable<DirectoryInfo> FindGlobbedDirectories(string path, string pattern)
         {
