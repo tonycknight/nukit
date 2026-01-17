@@ -21,7 +21,11 @@ namespace Nukit.Tests.Integration
 
         public void Dispose()
         {
-            Directory.Delete(path, true);
+            try
+            {
+                Directory.Delete(path, true);
+            }
+            catch (Exception) { }
         }
     }
 
@@ -47,7 +51,7 @@ namespace Nukit.Tests.Integration
 
         public static string DotnetBuildCommand(this OutputDirectory outDir) => $"dotnet build ./{outDir.Path}/testproj.csproj";
 
-        public static string NukitCommand(this OutputDirectory outDir, bool dryRun, bool nukeBin = true, bool nukeObj = true) => $"dotnet Nukit.dll {outDir.Path}/ --dry-run {dryRun} --bin {nukeBin} --obj {nukeObj} --trx false --force";
+        public static string NukitCommand(this OutputDirectory outDir, bool dryRun, bool nukeBin = true, bool nukeObj = true, string args = "") => $"dotnet Nukit.dll {outDir.Path}/ --dry-run {dryRun} --bin {nukeBin} --obj {nukeObj} --trx false --force {args}";
 
         public static ProcessExecution[] Execute(this string[] cmds, ITestOutputHelper output, bool success) =>
             cmds.Select(c => c.Execute(output, true)).ToArray();
@@ -135,7 +139,7 @@ namespace Nukit.Tests.Integration
         }
 
         public static ProcessExecution VerifyNukitSummary(this ProcessExecution result, int found, int deleted, int errors)
-        {            
+        {
             var reportLine = result.OutLog.Split(Environment.NewLine, StringSplitOptions.TrimEntries)
                 .Single(s => s.StartsWith("Nuke summary: "));
 

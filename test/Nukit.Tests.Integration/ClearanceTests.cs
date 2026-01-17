@@ -62,5 +62,25 @@ namespace Nukit.Tests.Integration
             nukitResult.VerifyNukitSummary(binFiles.Count + objFiles.Count, binFiles.Count + objFiles.Count, 0);
             outDir.GetFiles(true).ContainsSet(files, StringComparer.InvariantCultureIgnoreCase).ShouldBeTrue();
         }
+
+        [Fact]
+        public void Clear_Deletion_FindsFiles_GlobDeletion_DeletesFiles()
+        {
+            using var outDir = TestUtils.GetOutDir();
+
+            outDir.CreateProjectCommand().Execute(output, true);
+            var files = outDir.GetFiles(false).ToList();
+            outDir.DotnetBuildCommand().Execute(output, true);
+            var binFiles = outDir.GetBinaryFiles().ToList();
+            var objFiles = outDir.GetObjectFiles().ToList();
+            var glob = "**";
+            var globFiles = outDir.GetFiles(glob).ToList();
+
+            var nukitResult = outDir.NukitCommand(dryRun: false, nukeBin: false, nukeObj: false, args: $"--glob {glob}").Execute(output, true);
+
+            var postFiles = outDir.GetFiles(glob).ToList();
+            nukitResult.VerifyNukitSummary(globFiles.Count, globFiles.Count, 0);
+            postFiles.ShouldBeEmpty();
+        }
     }
 }
