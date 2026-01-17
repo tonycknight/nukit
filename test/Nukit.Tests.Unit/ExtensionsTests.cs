@@ -6,7 +6,6 @@ namespace Nukit.Tests.Unit
 {
     public class ExtensionsTests
     {
-        // TODO: temporary
         [Property]
         public bool ToTaskResult(string value)
         {
