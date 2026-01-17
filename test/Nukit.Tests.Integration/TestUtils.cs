@@ -88,8 +88,8 @@ namespace Nukit.Tests.Integration
             if (!ok)
                 throw new InvalidOperationException("Cannot start process");
 
-            var outLog = process.StandardOutput.ReadToEnd();
-            var errLog = process.StandardError.ReadToEnd();
+            var outLog = process.StandardOutput.ReadToEnd().StripControlChars();
+            var errLog = process.StandardError.ReadToEnd().StripControlChars();
             process.WaitForExit();
 
             return new ProcessExecution() { Command = $"{process.StartInfo.FileName} {process.StartInfo.Arguments}", ExitCode = process.ExitCode, OutLog = outLog, ErrorLog = errLog };
@@ -135,7 +135,7 @@ namespace Nukit.Tests.Integration
         }
 
         public static ProcessExecution VerifyNukitSummary(this ProcessExecution result, int found, int deleted, int errors)
-        {
+        {            
             var reportLine = result.OutLog.Split(Environment.NewLine, StringSplitOptions.TrimEntries)
                 .Single(s => s.StartsWith("Nuke summary: "));
 
@@ -157,6 +157,7 @@ namespace Nukit.Tests.Integration
         }
 
         public static IEnumerable<string> GetBinaryFiles(this OutputDirectory outDir) => outDir.GetFiles("**/bin/**/*.*");
+
         public static IEnumerable<string> GetObjectFiles(this OutputDirectory outDir) => outDir.GetFiles("**/obj/**/*.*");
 
         public static IEnumerable<string> GetFiles(this OutputDirectory outDir, string pattern)
@@ -173,5 +174,12 @@ namespace Nukit.Tests.Integration
 
         private static DirectoryInfoWrapper CreateDirectorWrapper(this string path) =>
             new DirectoryInfoWrapper(new DirectoryInfo(path));
+
+        private static string StripControlChars(this string value)
+        {
+            var pattern = @"\x1b\[[0-9;]*m|[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]";
+
+            return Regex.Replace(value, pattern, "");
+        }
     }
 }
