@@ -10,7 +10,7 @@ namespace Nukit.FileSystem
         IEnumerable<DirectoryInfo> FindGlobbedDirectories(string path, string pattern);
     }
 
-    internal class FileFinder(IFileSystem fs, IDirectoryProvider directoryFinder) : IFileFinder
+    internal class FileFinder(IFileSystem fs, IDirectoryProvider directories) : IFileFinder
     {        
         public IEnumerable<DirectoryInfo> FindBinaryDirectories(string path) => FindDirectories(path, "bin", ["**/*.dll"]);
 
@@ -33,9 +33,9 @@ namespace Nukit.FileSystem
 
         private bool IsDirectoryMatch(string path, string[] includedPaths)
         {
-            if (directoryFinder.DirectoryExists(path))
+            if (directories.DirectoryExists(path))
             {                
-                return directoryFinder.GetDirectories(path, includedPaths, null).Any();
+                return directories.GetDirectories(path, includedPaths, null).Any();
             }
 
             return false;
@@ -43,9 +43,9 @@ namespace Nukit.FileSystem
 
         private IEnumerable<string> GetDirectoryMatches(string path, string[] includedPaths)
         {
-            if (directoryFinder.DirectoryExists(path))
+            if (directories.DirectoryExists(path))
             {                
-                return directoryFinder.GetDirectories(path, includedPaths, null)
+                return directories.GetDirectories(path, includedPaths, null)
                     .Select(p => Path.Combine(path, p))
                     .Select(f => Path.GetDirectoryName(f) ?? String.Empty)
                     .Where(d => d != String.Empty)
