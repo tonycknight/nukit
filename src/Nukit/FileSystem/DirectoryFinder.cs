@@ -4,25 +4,25 @@ namespace Nukit.FileSystem
 {
     internal interface IDirectoryFinder
     {
-        IEnumerable<DirectoryInfo> FindBinaryDirectories(string path);
-        IEnumerable<DirectoryInfo> FindObjectDirectories(string path);
-        IEnumerable<DirectoryInfo> FindGlobbedDirectories(string path, string pattern);
+        IEnumerable<string> FindBinaryDirectories(string path);
+        IEnumerable<string> FindObjectDirectories(string path);
+        IEnumerable<string> FindGlobbedDirectories(string path, string pattern);
     }
 
     internal class DirectoryFinder(IFileSystem fs, IDirectoryProvider directories) : IDirectoryFinder
     {
-        public IEnumerable<DirectoryInfo> FindBinaryDirectories(string path) => FindDirectories(path, "bin", ["**/*.dll"]);
+        public IEnumerable<string> FindBinaryDirectories(string path) => FindDirectories(path, "bin", ["**/*.dll"]);
 
-        public IEnumerable<DirectoryInfo> FindObjectDirectories(string path) => FindDirectories(path, "obj", ["**/project.assets.json"]);
+        public IEnumerable<string> FindObjectDirectories(string path) => FindDirectories(path, "obj", ["**/project.assets.json"]);
 
-        public IEnumerable<DirectoryInfo> FindGlobbedDirectories(string path, string pattern) =>
-            GetDirectoryMatches(path, [pattern]).Select(p => new DirectoryInfo(p));
+        public IEnumerable<string> FindGlobbedDirectories(string path, string pattern) =>
+            GetDirectoryMatches(path, [pattern]).Select(p => new DirectoryInfo(p).FullName);
 
-        private IEnumerable<DirectoryInfo> FindDirectories(string path, string pattern, string[] includedPaths)
+        private IEnumerable<string> FindDirectories(string path, string pattern, string[] includedPaths)
         {
             var dirs = fs.Directory.GetDirectories(path, pattern, SearchOption.AllDirectories);
 
-            return dirs.Where(d => IsDirectoryMatch(d, includedPaths)).Select(p => new DirectoryInfo(p));
+            return dirs.Where(d => IsDirectoryMatch(d, includedPaths)).Select(p => new DirectoryInfo(p).FullName);
         }
 
         private bool IsDirectoryMatch(string path, string[] includedPaths)

@@ -68,15 +68,15 @@ namespace Nukit.Clearance
             return PurgeDirectories(dryRun, dirs);
         }
 
-        private FilePurgeInfo PurgeDirectories(bool dryRun, IEnumerable<DirectoryInfo> directories)
+        private FilePurgeInfo PurgeDirectories(bool dryRun, IEnumerable<string> directories)
         {
             var purgeResult = new FileSystem.FilePurgeInfo();
 
             foreach (var directory in directories)
             {
-                console.Write($"Deleting directory {directory.FullName.Cyan()}...".Indent(2));
+                console.Write($"Deleting directory {directory.Cyan()}...".Indent(2));
 
-                var result = purger.Delete(directory.FullName, dryRun);
+                var result = purger.Delete(directory, dryRun);
 
                 var report = GetLineReport(result);
 

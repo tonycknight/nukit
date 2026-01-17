@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.IO.Abstractions;
 using NSubstitute;
+using Nukit.FileSystem;
 
 namespace Nukit.Tests.Unit
 {
@@ -53,6 +54,11 @@ namespace Nukit.Tests.Unit
                 fs.Directory.When(f => f.Delete(Arg.Any<string>(), Arg.Any<bool>())).Throws(exception);
 
             return fs;
+        }
+
+        public static IDirectoryProvider CreateDirectoryProvider()
+        {
+            return Substitute.For<IDirectoryProvider>();
         }
     }
 }
