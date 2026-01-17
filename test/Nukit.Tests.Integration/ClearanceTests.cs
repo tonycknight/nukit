@@ -25,7 +25,7 @@ namespace Nukit.Tests.Integration
         }
 
         [Fact]
-        public void Clear_Deletion_FindsFiles_NoObjectDeletion_DeletesFiles()
+        public void Clear_Deletion_NoObjectDeletion_DeletesFiles()
         {
             using var outDir = TestUtils.GetOutDir();
 
@@ -47,7 +47,7 @@ namespace Nukit.Tests.Integration
         }
 
         [Fact]
-        public void Clear_Deletion_FindsFiles_ObjectDeletion_DeletesFiles()
+        public void Clear_Deletion_ObjectDeletion_DeletesFiles()
         {
             using var outDir = TestUtils.GetOutDir();
 
@@ -67,7 +67,7 @@ namespace Nukit.Tests.Integration
         [InlineData("**")]
         [InlineData("**/bin/Release")]
         [InlineData("**/obj")]
-        public void Clear_Deletion_FindsFiles_GlobDeletion_DeletesFiles(string glob)
+        public void Clear_Deletion_GlobDeletion_DeletesFiles(string glob)
         {
             using var outDir = TestUtils.GetOutDir();
 
@@ -83,6 +83,28 @@ namespace Nukit.Tests.Integration
             var postFiles = outDir.GetFiles(glob).ToList();
             nukitResult.VerifyNukitSummary(globFiles.Count, globFiles.Count, 0);
             postFiles.ShouldBeEmpty();
+        }
+
+        [Theory]
+        [InlineData("**ABC")]
+        [InlineData("**/bin/ReleaseABC")]
+        [InlineData("**/objABC")]
+        public void Clear_Deletion_GlobDeletion_DoesNotDeleteFiles(string glob)
+        {
+            using var outDir = TestUtils.GetOutDir();
+
+            outDir.CreateProjectCommand().Execute(output, true);
+            var files = outDir.GetFiles(false).ToList();
+            outDir.DotnetBuildCommand().Execute(output, true);
+            var binFiles = outDir.GetBinaryFiles().ToList();
+            var objFiles = outDir.GetObjectFiles().ToList();
+            var globFiles = outDir.GetFiles(glob).ToList();
+
+            var nukitResult = outDir.NukitCommand(dryRun: false, nukeBin: false, nukeObj: false, args: $"--glob {glob}").Execute(output, true);
+
+            var postFiles = outDir.GetFiles(glob).ToList();
+            nukitResult.VerifyNukitSummary(0, 0, 0);
+            postFiles.SequenceEqual(globFiles).ShouldBeTrue();
         }
     }
 }
