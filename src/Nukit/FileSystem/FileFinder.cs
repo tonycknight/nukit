@@ -10,7 +10,7 @@ namespace Nukit.FileSystem
         IEnumerable<DirectoryInfo> FindGlobbedDirectories(string path, string pattern);
     }
 
-    internal class FileFinder(IFileSystem fs, IDirectoryFinder directoryFinder) : IFileFinder
+    internal class FileFinder(IFileSystem fs, IDirectoryProvider directoryFinder) : IFileFinder
     {        
         public IEnumerable<DirectoryInfo> FindBinaryDirectories(string path) => FindDirectories(path, "bin", ["**/*.dll"]);
 

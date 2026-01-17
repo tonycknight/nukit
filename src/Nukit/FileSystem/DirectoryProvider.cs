@@ -4,14 +4,14 @@ using Microsoft.Extensions.FileSystemGlobbing;
 
 namespace Nukit.FileSystem
 {
-    internal interface IDirectoryFinder
+    internal interface IDirectoryProvider
     {
         bool DirectoryExists(string path);
         IEnumerable<string> GetDirectories(string path, string[]? includedPaths, string[]? excludedPaths);
     }
 
     [ExcludeFromCodeCoverage] // The Match class cannot accept injected IFileSystem instances
-    internal class DirectoryFinder(IFileSystem fs) : IDirectoryFinder
+    internal class DirectoryProvider(IFileSystem fs) : IDirectoryProvider
     {
         public bool DirectoryExists(string path) => fs.DirectoryInfo.New(path).Exists;
 

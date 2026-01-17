@@ -40,7 +40,7 @@ namespace Nukit
         private static IServiceCollection CreateServices() =>
             new ServiceCollection()
                 .AddNugetClient()
-                .AddTransient<FileSystem.IDirectoryFinder, FileSystem.DirectoryFinder>()
+                .AddTransient<FileSystem.IDirectoryProvider, FileSystem.DirectoryProvider>()
                 .AddTransient<System.IO.Abstractions.IFileSystem, System.IO.Abstractions.FileSystem>()
                 .AddTransient<FileSystem.IFileFinder, FileSystem.FileFinder>()
                 .AddTransient<FileSystem.IFilePurger, FileSystem.FilePurger>()
