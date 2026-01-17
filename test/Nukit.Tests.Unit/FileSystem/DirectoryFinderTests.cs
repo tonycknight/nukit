@@ -84,6 +84,27 @@ namespace Nukit.Tests.Unit.FileSystem
         }
 
         [Theory]
+        [InlineData("path", "bin")]
+        public void FindBinaryDirectories_DiirectoryExists_DirectoryNoMatch_ReturnsEmpty(string path, string subPath)
+        {
+            var fs = TestUtils.CreateFileSystem()
+                .SetGetDirectories(path, [subPath]);
+
+            var dirs = TestUtils.CreateDirectoryProvider()
+                .SetDirectoryExists(path, true)
+                .SetDirectoryExists(subPath, true)
+                .SetGetDirectories(path, [], [])
+                .SetGetDirectories(subPath, [], []);
+
+            var finder = new DirectoryFinder(fs, dirs);
+
+            var result = finder.FindBinaryDirectories(path).ToList();
+
+            result.ShouldBeEmpty();
+        }
+
+
+        [Theory]
         [InlineData("path", "obj", "a.txt")]
         public void FindObjectDirectories_DiirectoryExists_ReturnsFiles(string path, string subPath, params string[] files)
         {
@@ -103,6 +124,26 @@ namespace Nukit.Tests.Unit.FileSystem
             result.ShouldNotBeEmpty();
             result.Count.ShouldBe(1);
             result.All(r => r.EndsWith(subPath)).ShouldBeTrue();
+        }
+
+        [Theory]
+        [InlineData("path", "obj")]
+        public void FindObjectDirectories_DiirectoryExists_DirectoryNoMatch_ReturnsEmpty(string path, string subPath)
+        {
+            var fs = TestUtils.CreateFileSystem()
+                .SetGetDirectories(path, [subPath]);
+
+            var dirs = TestUtils.CreateDirectoryProvider()
+                .SetDirectoryExists(path, true)
+                .SetDirectoryExists(subPath, true)
+                .SetGetDirectories(path, [], [])
+                .SetGetDirectories(subPath, [], []);
+
+            var finder = new DirectoryFinder(fs, dirs);
+
+            var result = finder.FindObjectDirectories(path).ToList();
+
+            result.ShouldBeEmpty();
         }
     }
 }
