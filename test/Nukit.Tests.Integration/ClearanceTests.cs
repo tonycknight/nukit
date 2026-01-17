@@ -102,9 +102,8 @@ namespace Nukit.Tests.Integration
 
             var nukitResult = outDir.NukitCommand(dryRun: false, nukeBin: false, nukeObj: false, args: $"--glob {glob}").Execute(output, true);
 
-            var postFiles = outDir.GetFiles(glob).ToList();
             nukitResult.VerifyNukitSummary(0, 0, 0);
-            postFiles.SequenceEqual(globFiles).ShouldBeTrue();
+            outDir.GetFiles(glob).SequenceEqual(globFiles).ShouldBeTrue();
         }
     }
 }
