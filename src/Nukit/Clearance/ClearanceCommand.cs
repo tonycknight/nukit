@@ -40,8 +40,8 @@ namespace Nukit.Clearance
 
         private FilePurgeInfo PurgeBinaries(bool dryRun, string root)
         {
-            console.WriteLine(GetDirectoryHeadline(root, "bin"));
-
+            console.WriteDirectoryHeadline(root, "bin");
+            
             var binDirs = fileFinder.FindBinaryDirectories(root);
 
             return PurgeDirectories(dryRun, binDirs);
@@ -49,7 +49,7 @@ namespace Nukit.Clearance
 
         private FilePurgeInfo PurgeObjects(bool dryRun, string root)
         {
-            console.WriteLine(GetDirectoryHeadline(root, "obj"));
+            console.WriteDirectoryHeadline(root, "obj");
 
             var binDirs = fileFinder.FindObjectDirectories(root);
 
@@ -58,7 +58,7 @@ namespace Nukit.Clearance
 
         private FilePurgeInfo PurgeDirectories(bool dryRun, string root, string pattern)
         {
-            console.WriteLine(GetDirectoryHeadline(root, pattern));
+            console.WriteDirectoryHeadline(root, pattern);
 
             var dirs = fileFinder.FindGlobbedDirectories(root, pattern);
 
@@ -136,7 +136,5 @@ namespace Nukit.Clearance
 
             return msg + baseMsg;
         }
-
-        private string GetDirectoryHeadline(string path, string name) => $"Searching for {name.Cyan()} directories under {path.CornflowerBlue()}";
     }
 }
