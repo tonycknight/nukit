@@ -4,20 +4,20 @@ namespace Nukit.FileSystem
 {
     internal interface IFilePurger
     {
-        FilePurgeInfo Delete(DirectoryInfo directory, bool dryRun);
+        FilePurgeInfo Delete(string directory, bool dryRun);
     }
 
     internal class FilePurger(IFileSystem fs) : IFilePurger
     {
-        public FilePurgeInfo Delete(DirectoryInfo directory, bool dryRun)
+        public FilePurgeInfo Delete(string directory, bool dryRun)
         {
             int found = 0;
             int deleted = 0;
             var errors = new List<string>();
 
-            if (fs.Directory.Exists(directory.FullName))
+            if (fs.Directory.Exists(directory))
             {
-                var files = fs.Directory.GetFiles(directory.FullName, "*", SearchOption.AllDirectories);
+                var files = fs.Directory.GetFiles(directory, "*", SearchOption.AllDirectories);
 
                 foreach (var file in files)
                 {
@@ -40,7 +40,7 @@ namespace Nukit.FileSystem
                 {
                     try
                     {
-                        fs.Directory.Delete(directory.FullName, true);
+                        fs.Directory.Delete(directory, true);
                     }
                     catch (Exception ex)
                     {
@@ -49,7 +49,7 @@ namespace Nukit.FileSystem
                 }
             }
 
-            return new FilePurgeInfo { Deleted = deleted, Found = found, Directory = directory.FullName, Errors = errors };
+            return new FilePurgeInfo { Deleted = deleted, Found = found, Directory = directory, Errors = errors };
         }
     }
 }

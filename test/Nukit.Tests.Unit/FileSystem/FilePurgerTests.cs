@@ -18,8 +18,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new FilePurger(fs);
 
-            DirectoryInfo directory = new(path);
-            var result = purger.Delete(directory, false);
+            var result = purger.Delete(path, false);
 
             result.Deleted.ShouldBe(0);
             result.Found.ShouldBe(0);
@@ -40,8 +39,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new FilePurger(fs);
 
-            DirectoryInfo directory = new(path);
-            var result = purger.Delete(directory, true);
+            var result = purger.Delete(path, true);
 
             result.Deleted.ShouldBe(0);
             result.Found.ShouldBe(0);
@@ -61,14 +59,13 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new FilePurger(fs);
 
-            DirectoryInfo directory = new(path);
-            var result = purger.Delete(directory, false);
+            var result = purger.Delete(path, false);
 
             result.Deleted.ShouldBe(0);
             result.Found.ShouldBe(0);
             result.Errors.ShouldBeEmpty();
             result.Directory.ShouldNotBeNullOrWhiteSpace();
-            fs.Directory.Received(0).Delete(Arg.Any<string>(), Arg.Any<bool>());
+            fs.Directory.Received(1).Delete(Arg.Any<string>(), Arg.Any<bool>());
         }
 
         [Theory]
@@ -82,8 +79,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new FilePurger(fs);
 
-            DirectoryInfo directory = new(path);
-            var result = purger.Delete(directory, true);
+            var result = purger.Delete(path, true);
 
             result.Deleted.ShouldBe(0);
             result.Found.ShouldBe(0);
@@ -105,8 +101,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new FilePurger(fs);
 
-            DirectoryInfo directory = new(path);
-            var result = purger.Delete(directory, false);
+            var result = purger.Delete(path, false);
 
             result.Deleted.ShouldBe(files.Length);
             result.Found.ShouldBe(files.Length);
@@ -118,9 +113,9 @@ namespace Nukit.Tests.Unit.FileSystem
         }
 
         [Theory]
-        [InlineData("c:\\test")]
-        [InlineData("c:\\test", "a.txt")]
-        [InlineData("c:\\test", "a.txt", "b.txt")]
+        [InlineData("/test")]
+        [InlineData("/test", "a.txt")]
+        [InlineData("/test", "a.txt", "b.txt")]
         public void Delete_DryRun_FilesReturned_ReturnsFilesDeleted(string path, params string[] files)
         {
             var fs = TestUtils.CreateFileSystem()
@@ -130,8 +125,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new FilePurger(fs);
 
-            DirectoryInfo directory = new(path);
-            var result = purger.Delete(directory, true);
+            var result = purger.Delete(path, true);
 
             result.Deleted.ShouldBe(0);
             result.Found.ShouldBe(files.Length);
@@ -155,8 +149,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new FilePurger(fs);
 
-            DirectoryInfo directory = new(path);
-            var result = purger.Delete(directory, false);
+            var result = purger.Delete(path, false);
 
             result.Deleted.ShouldBe(0);
             result.Found.ShouldBe(files.Length);
@@ -181,8 +174,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new FilePurger(fs);
 
-            DirectoryInfo directory = new(path);
-            var result = purger.Delete(directory, false);
+            var result = purger.Delete(path, false);
 
             result.Deleted.ShouldBe(files.Length);
             result.Found.ShouldBe(files.Length);

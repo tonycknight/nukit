@@ -76,7 +76,7 @@ namespace Nukit.Clearance
             {
                 console.Write($"Deleting directory {directory.FullName.Cyan()}...".Indent(2));
 
-                var result = purger.Delete(directory, dryRun);
+                var result = purger.Delete(directory.FullName, dryRun);
 
                 var report = GetLineReport(result);
 
