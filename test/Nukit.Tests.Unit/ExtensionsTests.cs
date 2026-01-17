@@ -18,7 +18,7 @@ namespace Nukit.Tests.Unit
         }
 
         [Fact]
-        public void Coalesce_NullSequence_ReturnsEmpty() 
+        public void Coalesce_NullSequence_ReturnsEmpty()
         {
             int[]? values = null;
             var result = values.Coalesce();
@@ -29,7 +29,7 @@ namespace Nukit.Tests.Unit
         [Theory]
         [InlineData([])]
         [InlineData([1])]
-        [InlineData([1,2,3])]
+        [InlineData([1, 2, 3])]
         public void Coalesce_NonNullSequence_ReturnsEmpty(params int[]? values)
         {
             var result = values.Coalesce();
@@ -44,7 +44,7 @@ namespace Nukit.Tests.Unit
 
             var result = value.Indent(indentation.Get);
 
-            return result.EndsWith(value) 
+            return result.EndsWith(value)
                 && result.Length == indentation.Get + value.Length
                 && result.Trim() == value;
         }
