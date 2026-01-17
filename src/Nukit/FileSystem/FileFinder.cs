@@ -5,7 +5,6 @@ namespace Nukit.FileSystem
 {
     internal interface IFileFinder
     {
-        string Normalise(string path);
         IEnumerable<DirectoryInfo> FindBinaryDirectories(string path);
         IEnumerable<DirectoryInfo> FindObjectDirectories(string path);
         IEnumerable<DirectoryInfo> FindGlobbedDirectories(string path, string pattern);
@@ -15,17 +14,6 @@ namespace Nukit.FileSystem
     {
         private readonly Matcher _binMatcher = CreateMatcher("**/*.dll");
         private readonly Matcher _objMatcher = CreateMatcher("**/project.assets.json");
-
-        public string Normalise(string path)
-        {
-            if (!Path.IsPathRooted(path))
-            {
-                var wd = fs.Directory.GetCurrentDirectory();
-                path = Path.Combine(wd, path);
-                return Path.GetFullPath(path);
-            }
-            return Path.GetFullPath(path);
-        }
 
         public IEnumerable<DirectoryInfo> FindBinaryDirectories(string path) => FindDirectories(path, "bin", _binMatcher);
 

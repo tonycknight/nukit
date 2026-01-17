@@ -1,6 +1,7 @@
 ﻿using Nukit.Console;
 using Nukit.FileSystem;
 using Spectre.Console.Cli;
+using Tk.Extensions.Io;
 
 namespace Nukit.Clearance
 {
@@ -15,7 +16,7 @@ namespace Nukit.Clearance
                 return false.ToTaskResult();
 
             var purgeResult = new FileSystem.FilePurgeInfo();
-            var root = fileFinder.Normalise(settings.Path == "" ? "." : settings.Path);
+            var root = (settings.Path == "" ? "." : settings.Path).ResolveWorkingPath();
 
             if (settings.NukeBinaryDirectories)
             {
