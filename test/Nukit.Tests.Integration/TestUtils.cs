@@ -47,7 +47,7 @@ namespace Nukit.Tests.Integration
 
         public static string DotnetBuildCommand(this OutputDirectory outDir) => $"dotnet build ./{outDir.Path}/testproj.csproj";
 
-        public static string NukitCommand(this OutputDirectory outDir, bool dryRun, bool nukeBin = true, bool nukeObj = true) => $"dotnet nukit.dll {outDir.Path}/ --dry-run {dryRun} --bin {nukeBin} --obj {nukeObj} --trx --force";
+        public static string NukitCommand(this OutputDirectory outDir, bool dryRun, bool nukeBin = true, bool nukeObj = true) => $"dotnet nukit.dll {outDir.Path}/ --dry-run {dryRun} --bin {nukeBin} --obj {nukeObj} --trx false --force";
 
         public static ProcessExecution[] Execute(this string[] cmds, ITestOutputHelper output, bool success) =>
             cmds.Select(c => c.Execute(output, true)).ToArray();
