@@ -2,7 +2,7 @@
 {
     internal record FilePurgeInfo
     {
-        public DirectoryInfo? Directory { get; init; }
+        public string Directory { get; init; } = "";
         public int Found { get; init; }
         public int Deleted { get; init; }
         public List<string> Errors { get; init; } = new();

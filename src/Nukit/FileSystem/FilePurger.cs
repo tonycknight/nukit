@@ -49,7 +49,7 @@ namespace Nukit.FileSystem
                 }
             }
 
-            return new FilePurgeInfo { Deleted = deleted, Found = found, Directory = directory, Errors = errors };
+            return new FilePurgeInfo { Deleted = deleted, Found = found, Directory = directory.FullName, Errors = errors };
         }
     }
 }
