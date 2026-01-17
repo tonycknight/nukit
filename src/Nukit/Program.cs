@@ -6,6 +6,7 @@ using Tk.Nuget;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Nukit.Tests.Unit")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Nukit.Tests.Integration")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
 namespace Nukit
 {

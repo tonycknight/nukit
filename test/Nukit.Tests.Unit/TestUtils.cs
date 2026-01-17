@@ -60,5 +60,18 @@ namespace Nukit.Tests.Unit
         {
             return Substitute.For<IDirectoryProvider>();
         }
+
+        public static IDirectoryProvider SetDirectoryExists(this IDirectoryProvider dirs, string path, bool exists = true)
+        {
+            dirs.DirectoryExists(Arg.Is(path)).Returns(exists);
+            return dirs;
+        }
+
+        public static IDirectoryProvider SetGetDirectories(this IDirectoryProvider dirs, string path, string[] includedPatterns, string[] results)
+        {            
+            dirs.GetDirectories(Arg.Is(path), Arg.Any<string[]?>(), Arg.Any<string[]?>())
+                .Returns(results);
+            return dirs;
+        }
     }
 }
