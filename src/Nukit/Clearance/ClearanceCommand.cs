@@ -72,10 +72,10 @@ namespace Nukit.Clearance
             foreach (var directory in directories)
             {
                 console.WriteDirectoryDeletionPrefix(directory);
-                
+
                 var result = purger.Delete(directory, dryRun);
 
-                console.WriteLineReport(result);                
+                console.WriteLineReport(result);
 
                 purgeResult = purgeResult.Add(result);
             }
