@@ -4,6 +4,7 @@ namespace Nukit.Console
 {
     internal interface IConsoleWriter
     {
+        void WriteLines(IEnumerable<string> messages);
         void WriteLine(string message);
         void Write(string message);
         bool Confirm(string message);
@@ -18,5 +19,13 @@ namespace Nukit.Console
         public void Write(string message) => _ansiConsole.Markup(message);
 
         public void WriteLine(string message) => _ansiConsole.MarkupLine(message);
+
+        void IConsoleWriter.WriteLines(IEnumerable<string> messages)
+        {
+            foreach (var msg in messages)
+            {
+                WriteLine(msg);
+            }
+        }
     }
 }

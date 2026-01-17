@@ -17,23 +17,20 @@ namespace Nukit.Clearance
 
             var purgeResult = new FileSystem.FilePurgeInfo();
             var root = (settings.Path == "" ? "." : settings.Path).ResolveWorkingPath();
-
+            
             if (settings.NukeBinaryDirectories)
             {
-                var result = PurgeBinaries(settings.DryRun, root);
-                purgeResult = purgeResult.Add(result);
+                purgeResult = PurgeBinaries(settings.DryRun, root).Add(purgeResult);
             }
 
             if (settings.NukeObjectDirectories)
             {
-                var result = PurgeObjects(settings.DryRun, root);
-                purgeResult = purgeResult.Add(result);
+                purgeResult = PurgeObjects(settings.DryRun, root).Add(purgeResult);
             }
 
             foreach (var dirPattern in settings.NukeGlobbedDirectories.Coalesce())
             {
-                var result = PurgeDirectories(settings.DryRun, root, dirPattern);
-                purgeResult = purgeResult.Add(result);
+                purgeResult = PurgeDirectories(settings.DryRun, root, dirPattern).Add(purgeResult);
             }
 
             WriteSummary(purgeResult);
@@ -77,15 +74,10 @@ namespace Nukit.Clearance
                 console.Write($"Deleting directory {directory.Cyan()}...".Indent(2));
 
                 var result = purger.Delete(directory, dryRun);
-
-                var report = GetLineReport(result);
-
-                console.WriteLine(report);
-
-                foreach (var error in result.Errors)
-                {
-                    console.WriteLine(error.Red().Indent(2));
-                }
+                                
+                console.WriteLine(GetLineReport(result));
+                var lines = result.Errors.Select(e => e.Red().Indent(2));
+                console.WriteLines(lines);
 
                 purgeResult = purgeResult.Add(result);
             }
