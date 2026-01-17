@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.FileSystemGlobbing;
+using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 using Shouldly;
 using Xunit.Abstractions;
 
@@ -39,12 +41,13 @@ namespace Nukit.Tests.Integration
         public static OutputDirectory GetOutDir() => new OutputDirectory($"./testdata/{Guid.NewGuid().ToString().Replace("-", "")}");
 
         public static string CreateProjectCommand(this OutputDirectory outDir) => $"dotnet new classlib -o ./{outDir.Path} -n testproj";
+        public static string DotnetCleanCommand(this OutputDirectory outDir) => $"dotnet clean ./{outDir.Path}/testproj.csproj";
 
         public static string AddGoodHttpPackageACommand(this OutputDirectory outDir) => $"dotnet add ./{outDir.Path}/testproj.csproj package {httpPackage} -v 4.3.4";
 
         public static string DotnetBuildCommand(this OutputDirectory outDir) => $"dotnet build ./{outDir.Path}/testproj.csproj";
 
-        public static string NukitCommand(this OutputDirectory outDir, bool dryRun) => $"dotnet nukit.dll {outDir.Path}/ --dry-run {dryRun} --bin --obj --trx --force";
+        public static string NukitCommand(this OutputDirectory outDir, bool dryRun, bool nukeBin = true, bool nukeObj = true) => $"dotnet nukit.dll {outDir.Path}/ --dry-run {dryRun} --bin {nukeBin} --obj {nukeObj} --trx --force";
 
         public static ProcessExecution[] Execute(this string[] cmds, ITestOutputHelper output, bool success) =>
             cmds.Select(c => c.Execute(output, true)).ToArray();
@@ -145,5 +148,43 @@ namespace Nukit.Tests.Integration
 
             return result;
         }
+
+        public static IEnumerable<string> GetFiles(this OutputDirectory outDir, bool recurse = true)
+        {
+            var pattern = recurse ? "**/*.*" : "*.*";
+            var wrapper = outDir.Path.CreateDirectorWrapper();
+
+            var matcher = new Matcher().AddInclude(pattern);
+
+            return matcher.Execute(wrapper).Files.Select(m => m.Path);
+        }
+
+        public static void VerifyFiles(this OutputDirectory outDir, int binFileCount, int objFileCount)
+        {
+            var wrapper = outDir.Path.CreateDirectorWrapper();
+
+            var binMatcher = new Matcher().AddInclude("**/bin/**/*.*");
+            var objMatcher = new Matcher().AddInclude("**/obj/**/*.*");
+
+            var binFiles = binMatcher.Execute(wrapper).Files;
+            binFiles.Count().ShouldBe(binFileCount);
+
+            var objFiles = objMatcher.Execute(wrapper).Files;
+            objFiles.Count().ShouldBe(objFileCount);
+        }
+
+        public static bool ContainsSet<T>(this IEnumerable<T> values, IEnumerable<T> others, IEqualityComparer<T> comparer)
+        {
+            foreach (var other in others)
+            {
+                if (!values.Contains(other, comparer))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static DirectoryInfoWrapper CreateDirectorWrapper(this string path) =>
+            new DirectoryInfoWrapper(new DirectoryInfo(path));
     }
 }
