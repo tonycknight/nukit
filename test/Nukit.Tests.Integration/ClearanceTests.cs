@@ -19,10 +19,7 @@ namespace Nukit.Tests.Integration
 
             var nukitResult = outDir.NukitCommand(true).Execute(output, true);
 
-            nukitResult.OutLog.Contains("Nuke summary: Found: ").ShouldBeTrue();
-            nukitResult.OutLog.Contains("Found: 0").ShouldBeFalse();
-            nukitResult.OutLog.Contains("Deleted: 0").ShouldBeTrue();
-            nukitResult.OutLog.Contains("Erros: 0").ShouldBeTrue();
+            nukitResult.VerifyNukitSummary(21, 0, 0);
 
             return true;
         }
