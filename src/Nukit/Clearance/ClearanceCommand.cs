@@ -125,8 +125,8 @@ namespace Nukit.Clearance
             };
             var errors = result switch
             {
-                { Errors.Count: > 0 } => $"Erros: {result.Errors.Count.ToString().Red()}",
-                _ => $"Erros: {result.Errors.Count.ToString().Yellow()}",
+                { Errors.Count: > 0 } => $"Errors: {result.Errors.Count.ToString().Red()}",
+                _ => $"Errors: {result.Errors.Count.ToString().Yellow()}",
             };
 
             console.WriteLine("Nuke summary: ".Yellow() + $"{found} {deleted} {errors}");
