@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 using Shouldly;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace Nukit.Tests.Integration
 {
