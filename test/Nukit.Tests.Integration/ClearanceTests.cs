@@ -1,5 +1,5 @@
 ﻿using Shouldly;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace Nukit.Tests.Integration
 {
