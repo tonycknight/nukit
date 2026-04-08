@@ -6,7 +6,7 @@ namespace Nukit
     internal abstract class BaseCommand<T>(IConsoleWriter console, Tk.Nuget.INugetClient nuget) : AsyncCommand<T>
         where T : BaseCommandSettings
     {
-        public override async Task<int> ExecuteAsync(CommandContext context, T settings, CancellationToken cancellationToken)
+        protected override async Task<int> ExecuteAsync(CommandContext context, T settings, CancellationToken cancellationToken)
         {
             if (!settings.NoBanner)
                 await ShowBannerAsync();
