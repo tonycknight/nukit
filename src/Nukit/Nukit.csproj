@@ -27,7 +27,7 @@
     <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="10.0.7" />
     <PackageReference Include="Spectre.Console.Cli" Version="0.55.0" />
     <PackageReference Include="System.IO.Abstractions" Version="22.1.1" />
-    <PackageReference Include="Tk.Extensions" Version="0.1.294" />
+    <PackageReference Include="Tk.Extensions" Version="0.1.297" />
     <PackageReference Include="Tk.Nuget" Version="0.2.215" />
   </ItemGroup>
 
