@@ -18,7 +18,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new DirectoryPurger(fs);
 
-            var result = purger.Delete(path, false);
+            var result = purger.Delete(path, false, 0);
 
             result.Deleted.ShouldBe(0);
             result.Found.ShouldBe(0);
@@ -39,7 +39,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new DirectoryPurger(fs);
 
-            var result = purger.Delete(path, true);
+            var result = purger.Delete(path, true, 0);
 
             result.Deleted.ShouldBe(0);
             result.Found.ShouldBe(0);
@@ -59,7 +59,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new DirectoryPurger(fs);
 
-            var result = purger.Delete(path, false);
+            var result = purger.Delete(path, false, 0);
 
             result.Deleted.ShouldBe(0);
             result.Found.ShouldBe(0);
@@ -79,7 +79,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new DirectoryPurger(fs);
 
-            var result = purger.Delete(path, true);
+            var result = purger.Delete(path, true, 0);
 
             result.Deleted.ShouldBe(0);
             result.Found.ShouldBe(0);
@@ -101,7 +101,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new DirectoryPurger(fs);
 
-            var result = purger.Delete(path, false);
+            var result = purger.Delete(path, false, 0);
 
             result.Deleted.ShouldBe(files.Length);
             result.Found.ShouldBe(files.Length);
@@ -125,7 +125,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new DirectoryPurger(fs);
 
-            var result = purger.Delete(path, true);
+            var result = purger.Delete(path, true, 0);
 
             result.Deleted.ShouldBe(0);
             result.Found.ShouldBe(files.Length);
@@ -145,15 +145,19 @@ namespace Nukit.Tests.Unit.FileSystem
             var fs = TestUtils.CreateFileSystem()
                 .SetDirectoryExists(path, true)
                 .SetDirectoryGetFiles(path, files)
-                .SetFileDelete(path, new InvalidOperationException());
+                .SetFileDelete(path, new InvalidOperationException("test exception"));
 
             var purger = new DirectoryPurger(fs);
 
-            var result = purger.Delete(path, false);
+            var result = purger.Delete(path, false, 0);
 
             result.Deleted.ShouldBe(0);
             result.Found.ShouldBe(files.Length);
             result.Errors.Count.ShouldBe(files.Length);
+            if (files.Length > 0)
+            {
+                result.Errors.All(e => e == "test exception").ShouldBeTrue();
+            }
             result.Directory.ShouldNotBeNullOrWhiteSpace();
 
             fs.File.Received(files.Length).Delete(Arg.Any<string>());
@@ -170,11 +174,11 @@ namespace Nukit.Tests.Unit.FileSystem
                 .SetDirectoryExists(path, true)
                 .SetDirectoryGetFiles(path, files)
                 .SetFileDelete(path, null)
-                .SetDirectoryDelete(path, new InvalidOperationException());
+                .SetDirectoryDelete(path, new InvalidOperationException("test exception"));
 
             var purger = new DirectoryPurger(fs);
 
-            var result = purger.Delete(path, false);
+            var result = purger.Delete(path, false, 0);
 
             result.Deleted.ShouldBe(files.Length);
             result.Found.ShouldBe(files.Length);

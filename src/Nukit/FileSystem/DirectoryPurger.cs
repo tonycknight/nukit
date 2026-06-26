@@ -6,21 +6,20 @@ namespace Nukit.FileSystem
 {
     internal interface IDirectoryPurger
     {
-        FilePurgeInfo Delete(string directory, bool dryRun);
+        FilePurgeInfo Delete(string directory, bool dryRun, int retries);
     }
 
     internal class DirectoryPurger(IFileSystem fs) : IDirectoryPurger
     {
-        public FilePurgeInfo Delete(string directory, bool dryRun)
+        public FilePurgeInfo Delete(string directory, bool dryRun, int retries)
         {
-            int retries = 3;
             int found = 0;
             int deleted = 0;
             var errors = new List<string>();
 
             if (fs.Directory.Exists(directory))
             {
-                var resilience = CreateResilienceStrategy(5, TimeSpan.FromSeconds(5));
+                var resilience = CreateResilienceStrategy(retries, TimeSpan.FromSeconds(5));
 
                 var files = fs.Directory.GetFiles(directory, "*", SearchOption.AllDirectories);
 
@@ -59,21 +58,25 @@ namespace Nukit.FileSystem
 
         private ResiliencePipeline CreateResilienceStrategy(int retries, TimeSpan timeout)
         {
-            var options = new RetryStrategyOptions()
+            var builder = new ResiliencePipelineBuilder();
+
+            if (retries > 0)
             {
-                ShouldHandle = new PredicateBuilder().Handle<Exception>(),
-                BackoffType = DelayBackoffType.Exponential,
-                UseJitter = true,
-                MaxRetryAttempts = retries,
-                Delay = TimeSpan.FromMilliseconds(100),
-            };
+                var options = new RetryStrategyOptions()
+                {
+                    ShouldHandle = new PredicateBuilder().Handle<Exception>(),
+                    BackoffType = DelayBackoffType.Exponential,
+                    UseJitter = true,
+                    MaxRetryAttempts = retries > 0 ? retries : 0,
+                    Delay = TimeSpan.FromMilliseconds(100),
+                };
 
-            var pipeline = new ResiliencePipelineBuilder()
-                .AddRetry(options)
-                .AddTimeout(timeout)
-                .Build();
+                builder
+                    .AddRetry(options)
+                    .AddTimeout(timeout);
+            }
 
-            return pipeline;
+            return builder.Build();
         }
     }
 }
