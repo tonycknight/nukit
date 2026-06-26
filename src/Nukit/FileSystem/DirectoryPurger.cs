@@ -1,4 +1,6 @@
 ﻿using System.IO.Abstractions;
+using Polly;
+using Polly.Retry;
 
 namespace Nukit.FileSystem
 {
@@ -11,12 +13,15 @@ namespace Nukit.FileSystem
     {
         public FilePurgeInfo Delete(string directory, bool dryRun)
         {
+            int retries = 3;
             int found = 0;
             int deleted = 0;
             var errors = new List<string>();
 
             if (fs.Directory.Exists(directory))
             {
+                var resilience = CreateResilienceStrategy(5, TimeSpan.FromSeconds(5));
+
                 var files = fs.Directory.GetFiles(directory, "*", SearchOption.AllDirectories);
 
                 foreach (var file in files)
@@ -26,7 +31,7 @@ namespace Nukit.FileSystem
                     {
                         try
                         {
-                            fs.File.Delete(file);
+                            resilience.Execute(() => fs.File.Delete(file));
                             deleted++;
                         }
                         catch (Exception ex)
@@ -40,7 +45,7 @@ namespace Nukit.FileSystem
                 {
                     try
                     {
-                        fs.Directory.Delete(directory, true);
+                        resilience.Execute(() => fs.Directory.Delete(directory, true));
                     }
                     catch (Exception ex)
                     {
@@ -50,6 +55,25 @@ namespace Nukit.FileSystem
             }
 
             return new FilePurgeInfo { Deleted = deleted, Found = found, Directory = directory, Errors = errors };
+        }
+
+        private ResiliencePipeline CreateResilienceStrategy(int retries, TimeSpan timeout)
+        {
+            var options = new RetryStrategyOptions()
+            {
+                ShouldHandle = new PredicateBuilder().Handle<Exception>(),
+                BackoffType = DelayBackoffType.Exponential,
+                UseJitter = true,
+                MaxRetryAttempts = retries,
+                Delay = TimeSpan.FromMilliseconds(100),
+            };
+
+            var pipeline = new ResiliencePipelineBuilder()
+                .AddRetry(options)
+                .AddTimeout(timeout)
+                .Build();
+
+            return pipeline;
         }
     }
 }
