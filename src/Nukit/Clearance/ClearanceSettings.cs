@@ -22,7 +22,7 @@ namespace Nukit.Clearance
 
         [Description("Retry a deletion multiple times. Set to 0 to cancel retrying.")]
         [DefaultValue(3)]
-        [CommandOption("--retries <retry count>")]
+        [CommandOption("-r|--retries <retry count>")]
         public int Retries { get; init; } = 0;
 
         [Description("Nuke binary directories.")]
