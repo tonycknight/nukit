@@ -20,17 +20,17 @@ namespace Nukit.Clearance
 
             if (settings.NukeBinaryDirectories)
             {
-                purgeResult = PurgeBinaries(settings.DryRun, root).Add(purgeResult);
+                purgeResult = PurgeBinaries(settings, root).Add(purgeResult);
             }
 
             if (settings.NukeObjectDirectories)
             {
-                purgeResult = PurgeObjects(settings.DryRun, root).Add(purgeResult);
+                purgeResult = PurgeObjects(settings, root).Add(purgeResult);
             }
 
             foreach (var dirPattern in settings.NukeGlobbedDirectories.Coalesce())
             {
-                purgeResult = PurgeDirectories(settings.DryRun, root, dirPattern).Add(purgeResult);
+                purgeResult = PurgeDirectories(settings, root, dirPattern).Add(purgeResult);
             }
 
             console.WriteSummary(purgeResult);
@@ -38,34 +38,34 @@ namespace Nukit.Clearance
             return (purgeResult.Errors.Count == 0).ToTaskResult();
         }
 
-        private FilePurgeInfo PurgeBinaries(bool dryRun, string root)
+        private FilePurgeInfo PurgeBinaries(ClearanceSettings settings, string root)
         {
             console.WriteDirectoryHeadline(root, "bin");
 
             var binDirs = fileFinder.FindBinaryDirectories(root);
 
-            return PurgeDirectories(dryRun, binDirs);
+            return PurgeDirectories(settings, binDirs);
         }
 
-        private FilePurgeInfo PurgeObjects(bool dryRun, string root)
+        private FilePurgeInfo PurgeObjects(ClearanceSettings settings, string root)
         {
             console.WriteDirectoryHeadline(root, "obj");
 
             var binDirs = fileFinder.FindObjectDirectories(root);
 
-            return PurgeDirectories(dryRun, binDirs);
+            return PurgeDirectories(settings, binDirs);
         }
 
-        private FilePurgeInfo PurgeDirectories(bool dryRun, string root, string pattern)
+        private FilePurgeInfo PurgeDirectories(ClearanceSettings settings, string root, string pattern)
         {
             console.WriteDirectoryHeadline(root, pattern);
 
             var dirs = fileFinder.FindGlobbedDirectories(root, pattern);
 
-            return PurgeDirectories(dryRun, dirs);
+            return PurgeDirectories(settings, dirs);
         }
 
-        private FilePurgeInfo PurgeDirectories(bool dryRun, IEnumerable<string> directories)
+        private FilePurgeInfo PurgeDirectories(ClearanceSettings settings, IEnumerable<string> directories)
         {
             var purgeResult = new FileSystem.FilePurgeInfo();
 
@@ -73,7 +73,7 @@ namespace Nukit.Clearance
             {
                 console.WriteDirectoryDeletionPrefix(directory);
 
-                var result = purger.Delete(directory, dryRun);
+                var result = purger.Delete(directory, settings.DryRun, settings.Retries);
 
                 console.WriteLineReport(result);
 

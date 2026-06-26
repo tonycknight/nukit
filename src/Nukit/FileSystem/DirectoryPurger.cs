@@ -1,15 +1,17 @@
 ﻿using System.IO.Abstractions;
+using Polly;
+using Polly.Retry;
 
 namespace Nukit.FileSystem
 {
     internal interface IDirectoryPurger
     {
-        FilePurgeInfo Delete(string directory, bool dryRun);
+        FilePurgeInfo Delete(string directory, bool dryRun, int retries);
     }
 
     internal class DirectoryPurger(IFileSystem fs) : IDirectoryPurger
     {
-        public FilePurgeInfo Delete(string directory, bool dryRun)
+        public FilePurgeInfo Delete(string directory, bool dryRun, int retries)
         {
             int found = 0;
             int deleted = 0;
@@ -17,6 +19,8 @@ namespace Nukit.FileSystem
 
             if (fs.Directory.Exists(directory))
             {
+                var resilience = CreateResilienceStrategy(retries, TimeSpan.FromSeconds(5));
+
                 var files = fs.Directory.GetFiles(directory, "*", SearchOption.AllDirectories);
 
                 foreach (var file in files)
@@ -26,7 +30,7 @@ namespace Nukit.FileSystem
                     {
                         try
                         {
-                            fs.File.Delete(file);
+                            resilience.Execute(() => fs.File.Delete(file));
                             deleted++;
                         }
                         catch (Exception ex)
@@ -40,7 +44,7 @@ namespace Nukit.FileSystem
                 {
                     try
                     {
-                        fs.Directory.Delete(directory, true);
+                        resilience.Execute(() => fs.Directory.Delete(directory, true));
                     }
                     catch (Exception ex)
                     {
@@ -50,6 +54,29 @@ namespace Nukit.FileSystem
             }
 
             return new FilePurgeInfo { Deleted = deleted, Found = found, Directory = directory, Errors = errors };
+        }
+
+        private ResiliencePipeline CreateResilienceStrategy(int retries, TimeSpan timeout)
+        {
+            var builder = new ResiliencePipelineBuilder();
+
+            if (retries > 0)
+            {
+                var options = new RetryStrategyOptions()
+                {
+                    ShouldHandle = new PredicateBuilder().Handle<Exception>(),
+                    BackoffType = DelayBackoffType.Exponential,
+                    UseJitter = true,
+                    MaxRetryAttempts = retries > 0 ? retries : 0,
+                    Delay = TimeSpan.FromMilliseconds(100),
+                };
+
+                builder
+                    .AddRetry(options)
+                    .AddTimeout(timeout);
+            }
+
+            return builder.Build();
         }
     }
 }

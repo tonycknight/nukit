@@ -20,6 +20,11 @@ namespace Nukit.Clearance
         [CommandOption("--dry-run <true|false>")]
         public bool DryRun { get; init; } = false;
 
+        [Description("Retry a deletion multiple times. Set to 0 to cancel retrying.")]
+        [DefaultValue(3)]
+        [CommandOption("-r|--retries <retry count>")]
+        public int Retries { get; init; } = 0;
+
         [Description("Nuke binary directories.")]
         [DefaultValue(true)]
         [CommandOption("--bin <true|false>")]

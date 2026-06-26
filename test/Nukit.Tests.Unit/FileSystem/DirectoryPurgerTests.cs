@@ -18,7 +18,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new DirectoryPurger(fs);
 
-            var result = purger.Delete(path, false);
+            var result = purger.Delete(path, false, 3);
 
             result.Deleted.ShouldBe(0);
             result.Found.ShouldBe(0);
@@ -39,7 +39,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new DirectoryPurger(fs);
 
-            var result = purger.Delete(path, true);
+            var result = purger.Delete(path, true, 3);
 
             result.Deleted.ShouldBe(0);
             result.Found.ShouldBe(0);
@@ -59,7 +59,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new DirectoryPurger(fs);
 
-            var result = purger.Delete(path, false);
+            var result = purger.Delete(path, false, 3);
 
             result.Deleted.ShouldBe(0);
             result.Found.ShouldBe(0);
@@ -79,7 +79,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new DirectoryPurger(fs);
 
-            var result = purger.Delete(path, true);
+            var result = purger.Delete(path, true, 3);
 
             result.Deleted.ShouldBe(0);
             result.Found.ShouldBe(0);
@@ -101,7 +101,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new DirectoryPurger(fs);
 
-            var result = purger.Delete(path, false);
+            var result = purger.Delete(path, false, 3);
 
             result.Deleted.ShouldBe(files.Length);
             result.Found.ShouldBe(files.Length);
@@ -125,7 +125,7 @@ namespace Nukit.Tests.Unit.FileSystem
 
             var purger = new DirectoryPurger(fs);
 
-            var result = purger.Delete(path, true);
+            var result = purger.Delete(path, true, 3);
 
             result.Deleted.ShouldBe(0);
             result.Found.ShouldBe(files.Length);
@@ -137,44 +137,52 @@ namespace Nukit.Tests.Unit.FileSystem
         }
 
         [Theory]
-        [InlineData("c:\\test")]
-        [InlineData("c:\\test", "a.txt")]
-        [InlineData("c:\\test", "a.txt", "b.txt")]
-        public void Delete_NoDryRun_ErrorInDeletion_ReturnsNoFilesDeleted(string path, params string[] files)
+        [InlineData("c:\\test", 0)]
+        [InlineData("c:\\test", 3)]
+        [InlineData("c:\\test", 0, "a.txt")]
+        [InlineData("c:\\test", 3, "a.txt")]
+        [InlineData("c:\\test", 3, "a.txt", "b.txt")]
+        public void Delete_NoDryRun_ErrorInDeletion_ReturnsNoFilesDeleted(string path, int retries, params string[] files)
         {
             var fs = TestUtils.CreateFileSystem()
                 .SetDirectoryExists(path, true)
                 .SetDirectoryGetFiles(path, files)
-                .SetFileDelete(path, new InvalidOperationException());
+                .SetFileDelete(path, new InvalidOperationException("test exception"));
 
             var purger = new DirectoryPurger(fs);
 
-            var result = purger.Delete(path, false);
+            var result = purger.Delete(path, false, retries);
 
             result.Deleted.ShouldBe(0);
             result.Found.ShouldBe(files.Length);
             result.Errors.Count.ShouldBe(files.Length);
+            if (files.Length > 0)
+            {
+                result.Errors.All(e => e == "test exception").ShouldBeTrue();
+            }
             result.Directory.ShouldNotBeNullOrWhiteSpace();
 
-            fs.File.Received(files.Length).Delete(Arg.Any<string>());
+            fs.File.Received(files.Length * (retries + 1)).Delete(Arg.Any<string>());
             fs.Directory.Received(1).Delete(Arg.Any<string>(), Arg.Any<bool>());
         }
 
         [Theory]
-        [InlineData("c:\\test")]
-        [InlineData("c:\\test", "a.txt")]
-        [InlineData("c:\\test", "a.txt", "b.txt")]
-        public void Delete_NoDryRun_ErrorInDirectoryDeletion_ReturnsFilesDeleted(string path, params string[] files)
+        [InlineData("c:\\test", 0)]
+        [InlineData("c:\\test", 3)]
+        [InlineData("c:\\test", 0, "a.txt")]
+        [InlineData("c:\\test", 3, "a.txt")]
+        [InlineData("c:\\test", 3, "a.txt", "b.txt")]
+        public void Delete_NoDryRun_ErrorInDirectoryDeletion_ReturnsFilesDeleted(string path, int retries, params string[] files)
         {
             var fs = TestUtils.CreateFileSystem()
                 .SetDirectoryExists(path, true)
                 .SetDirectoryGetFiles(path, files)
                 .SetFileDelete(path, null)
-                .SetDirectoryDelete(path, new InvalidOperationException());
+                .SetDirectoryDelete(path, new InvalidOperationException("test exception"));
 
             var purger = new DirectoryPurger(fs);
 
-            var result = purger.Delete(path, false);
+            var result = purger.Delete(path, false, retries);
 
             result.Deleted.ShouldBe(files.Length);
             result.Found.ShouldBe(files.Length);
@@ -182,7 +190,7 @@ namespace Nukit.Tests.Unit.FileSystem
             result.Directory.ShouldNotBeNullOrWhiteSpace();
 
             fs.File.Received(files.Length).Delete(Arg.Any<string>());
-            fs.Directory.Received(1).Delete(Arg.Any<string>(), Arg.Any<bool>());
+            fs.Directory.Received(retries + 1).Delete(Arg.Any<string>(), Arg.Any<bool>());
         }
     }
 }
