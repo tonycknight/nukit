@@ -56,7 +56,7 @@ jobs:
         run: dotnet restore
 
       - name: Run Tests
-        run: dotnet test -c Debug .\test\Nukit.Tests.Unit\Nukit.Tests.Unit.csproj -- --coverage --coverage-output-format cobertura --report-trx
+        run: dotnet test -c Debug ./test/Nukit.Tests.Unit/Nukit.Tests.Unit.csproj -- --coverage --coverage-output-format cobertura --report-trx
       
       - name: Unit test results
         uses: dorny/test-reporter@v3
@@ -112,7 +112,7 @@ jobs:
         run: dotnet restore
 
       - name: Run Tests
-        run: dotnet test -c Release .\test\Nukit.Tests.Integration\Nukit.Tests.Integration.csproj -- --report-trx
+        run: dotnet test -c Release ./test/Nukit.Tests.Integration/Nukit.Tests.Integration.csproj -- --report-trx
 
       - name: Integration test results
         uses: dorny/test-reporter@v3
