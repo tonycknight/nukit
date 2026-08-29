@@ -56,24 +56,24 @@ jobs:
         run: dotnet restore
 
       - name: Run Tests
-        run: dotnet test -c Debug --filter FullyQualifiedName!~integration /p:CollectCoverage=true /p:CoverletOutput=./TestResults/coverage.info /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test_results.trx" 
+        run: dotnet test -c Debug .\test\Nukit.Tests.Unit\Nukit.Tests.Unit.csproj -- --coverage --coverage-output-format cobertura --report-trx
       
       - name: Unit test results
         uses: dorny/test-reporter@v3
         if: always()
         with:
           name: unit test results
-          path: ${{ github.workspace }}/test/Nukit.Tests.Unit/TestResults/test_results.trx
+          path: ${{ github.workspace }}/TestResults/*.trx
           reporter: dotnet-trx
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Consolidate code coverage
-        run: dotnet reportgenerator -reports:./test/**/coverage.info -targetdir:./reports/codecoverage -reporttypes:Html,Cobertura
+        run: dotnet reportgenerator -reports:./TestResults/*.cobertura.xml -targetdir:./publish/codecoverage -reporttypes:Html  
 
       - name: Code coverage results
         uses: 5monkeys/cobertura-action@v14
         with:
-          path: ${{ github.workspace }}/reports/codecoverage/Cobertura.xml
+          path: ${{ github.workspace }}/TestResults/*.cobertura.xml
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           minimum_coverage: 0
           fail_below_threshold: true
@@ -112,14 +112,14 @@ jobs:
         run: dotnet restore
 
       - name: Run Tests
-        run: dotnet test -c Release --filter FullyQualifiedName~integration --logger "trx;LogFileName=test_results.trx" -v n
+        run: dotnet test -c Release .\test\Nukit.Tests.Integration\Nukit.Tests.Integration.csproj -- --report-trx
 
       - name: Integration test results
         uses: dorny/test-reporter@v3
         if: always()
         with:
           name: integration test results - ${{ matrix.os }}
-          path: ${{ github.workspace }}/test/Nukit.Tests.Integration/TestResults/test_results.trx
+          path: ${{ github.workspace }}/TestResults/*.trx
           reporter: dotnet-trx
           path-replace-backslashes: true
           token: ${{ secrets.GITHUB_TOKEN }}          
