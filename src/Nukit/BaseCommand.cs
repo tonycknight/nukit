@@ -12,7 +12,7 @@ namespace Nukit
         {
             console = consoleFactory.CreateWriter(settings);
 
-            if (!settings.NoBanner)
+            if (!settings.NoBanner && settings.VerboseLogging)
                 await ShowBannerAsync();
 
             var result = await ExecuteCommandAsync(context, settings, cancellationToken);
