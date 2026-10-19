@@ -19,22 +19,22 @@ namespace Nukit.Clearance
         {
             var line = $"Searching for {name.Cyan()} directories under {path.CornflowerBlue()}";
 
-            console.WriteLine(line.ToMessage());
+            console.WriteLine(line.ToMessage(verbose: false));
         }
 
         public static void WriteDirectoryDeletionPrefix(this IConsoleWriter console, string directory)
         {
-            console.Write($"Deleting directory {directory.Cyan()}...".Indent(2).ToMessage());
+            console.Write($"Deleting directory {directory.Cyan()}...".Indent(2).ToMessage(verbose: false));
         }
 
         public static void WriteLineReport(this IConsoleWriter console, FilePurgeInfo result)
         {
-            console.WriteLine(GetLineReport(result).ToMessage());
+            console.WriteLine(GetLineReport(result).ToMessage(verbose: false));
             var lines = result.Errors.Select(e => e.Red().Indent(2));
             console.WriteLine(lines.ToMessage());
         }
 
-        public static void WriteEmptyResult(this IConsoleWriter console) => console.WriteLine("Nothing found.".Indent(2).ToMessage());
+        public static void WriteEmptyResult(this IConsoleWriter console) => console.WriteLine("Nothing found.".Indent(2).ToMessage(verbose: false));
 
         public static void WriteSummary(this IConsoleWriter console, FilePurgeInfo result) => console.WriteLine(GetSummary(result).ToMessage());
 

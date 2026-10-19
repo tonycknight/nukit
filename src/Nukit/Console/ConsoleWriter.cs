@@ -15,19 +15,18 @@ namespace Nukit.Console
 
         public bool Confirm(string message) => _ansiConsole.Confirm(message, false);
 
-        public void Write(Message message)
-        {
-            foreach (var line in message.Text)
-            {
-                _ansiConsole.Markup(line);
-            }
-        }
+        public void Write(Message message) => WriteMarkup(message, _ansiConsole.Markup);
 
-        public void WriteLine(Message message)
+        public void WriteLine(Message message) => WriteMarkup(message, _ansiConsole.MarkupLine);
+
+        private void WriteMarkup(Message message, Action<string> write)
         {
-            foreach (var line in message.Text)
+            if (settings.VerboseLogging || message.IsVerbose)
             {
-                _ansiConsole.MarkupLine(line);
+                foreach (var line in message.Text)
+                {
+                    write(line);
+                }
             }
         }
     }
