@@ -21,8 +21,8 @@ namespace Nukit
             var lines = ConsoleExtensions.GetBanner();
             var upgrades = await nuget.GetUpgradeNotice();
 
-            console.WriteLines(lines);
-            console.WriteLines(upgrades);
+            console.WriteLine(lines.ToMessage());
+            console.WriteLine(upgrades.ToMessage());
         }
 
         protected abstract Task<bool> ExecuteCommandAsync(CommandContext context, T settings, CancellationToken cancellationToken);

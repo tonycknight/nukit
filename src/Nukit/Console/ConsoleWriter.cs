@@ -2,11 +2,25 @@
 
 namespace Nukit.Console
 {
+    internal record Message
+    {
+        public required bool IsVerbose { get; init; }
+        public required IReadOnlyList<string> Text { get; init; }
+    }
+
+    internal static class MessageExtensions
+    {
+        public static Message ToMessage(this IEnumerable<string> lines, bool verbose = true) =>
+            new Message() { IsVerbose = verbose, Text = [.. lines] };
+
+        public static Message ToMessage(this string line, bool verbose = true) =>
+            new Message() { IsVerbose = verbose, Text = [line] };
+    }
+
     internal interface IConsoleWriter
     {
-        void WriteLines(IEnumerable<string> messages);
-        void WriteLine(string message);
-        void Write(string message);
+        void WriteLine(Message message);
+        void Write(Message message);
         bool Confirm(string message);
     }
 
@@ -16,15 +30,19 @@ namespace Nukit.Console
 
         public bool Confirm(string message) => _ansiConsole.Confirm(message, false);
 
-        public void Write(string message) => _ansiConsole.Markup(message);
-
-        public void WriteLine(string message) => _ansiConsole.MarkupLine(message);
-
-        void IConsoleWriter.WriteLines(IEnumerable<string> messages)
+        public void Write(Message message)
         {
-            foreach (var msg in messages)
+            foreach (var line in message.Text)
             {
-                WriteLine(msg);
+                _ansiConsole.Markup(line);
+            }
+        }
+
+        public void WriteLine(Message message)
+        {
+            foreach (var line in message.Text)
+            {
+                _ansiConsole.MarkupLine(line);
             }
         }
     }
