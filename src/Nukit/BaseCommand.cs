@@ -3,11 +3,15 @@ using Spectre.Console.Cli;
 
 namespace Nukit
 {
-    internal abstract class BaseCommand<T>(IConsoleWriter console, Tk.Nuget.INugetClient nuget) : AsyncCommand<T>
+    internal abstract class BaseCommand<T>(IConsoleWriterFactory consoleFactory, Tk.Nuget.INugetClient nuget) : AsyncCommand<T>
         where T : BaseCommandSettings
     {
+        protected IConsoleWriter console;
+
         public override async Task<int> ExecuteAsync(CommandContext context, T settings, CancellationToken cancellationToken)
         {
+            console = consoleFactory.CreateWriter(settings);
+
             if (!settings.NoBanner)
                 await ShowBannerAsync();
 

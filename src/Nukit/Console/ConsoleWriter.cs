@@ -9,7 +9,7 @@ namespace Nukit.Console
         bool Confirm(string message);
     }
 
-    internal class ConsoleWriter : IConsoleWriter
+    internal class ConsoleWriter(BaseCommandSettings settings) : IConsoleWriter
     {
         private readonly IAnsiConsole _ansiConsole = AnsiConsole.Console;
 
