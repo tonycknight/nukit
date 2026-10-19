@@ -4,27 +4,29 @@ namespace Nukit.Console
 {
     internal interface IConsoleWriter
     {
-        void WriteLines(IEnumerable<string> messages);
-        void WriteLine(string message);
-        void Write(string message);
+        void WriteLine(Message message);
+        void Write(Message message);
         bool Confirm(string message);
     }
 
-    internal class ConsoleWriter : IConsoleWriter
+    internal class ConsoleWriter(BaseCommandSettings settings) : IConsoleWriter
     {
         private readonly IAnsiConsole _ansiConsole = AnsiConsole.Console;
 
         public bool Confirm(string message) => _ansiConsole.Confirm(message, false);
 
-        public void Write(string message) => _ansiConsole.Markup(message);
+        public void Write(Message message) => WriteMarkup(message, _ansiConsole.Markup);
 
-        public void WriteLine(string message) => _ansiConsole.MarkupLine(message);
+        public void WriteLine(Message message) => WriteMarkup(message, _ansiConsole.MarkupLine);
 
-        void IConsoleWriter.WriteLines(IEnumerable<string> messages)
+        private void WriteMarkup(Message message, Action<string> write)
         {
-            foreach (var msg in messages)
+            if (settings.VerboseLogging || message.IsVerbose)
             {
-                WriteLine(msg);
+                foreach (var line in message.Text)
+                {
+                    write(line);
+                }
             }
         }
     }

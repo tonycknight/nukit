@@ -9,5 +9,10 @@ namespace Nukit
         [DefaultValue(false)]
         [CommandOption("--no-banner <true|false>")]
         public bool NoBanner { get; init; } = false;
+
+        [Description("Use verbose logging.")]
+        [DefaultValue(true)]
+        [CommandOption("-v|--verbose <true|false>")]
+        public bool VerboseLogging { get; init; } = true;
     }
 }

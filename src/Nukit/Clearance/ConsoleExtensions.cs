@@ -19,24 +19,24 @@ namespace Nukit.Clearance
         {
             var line = $"Searching for {name.Cyan()} directories under {path.CornflowerBlue()}";
 
-            console.WriteLine(line);
+            console.WriteLine(line.ToMessage(verbose: false));
         }
 
         public static void WriteDirectoryDeletionPrefix(this IConsoleWriter console, string directory)
         {
-            console.Write($"Deleting directory {directory.Cyan()}...".Indent(2));
+            console.Write($"Deleting directory {directory.Cyan()}...".Indent(2).ToMessage(verbose: false));
         }
 
         public static void WriteLineReport(this IConsoleWriter console, FilePurgeInfo result)
         {
-            console.WriteLine(GetLineReport(result));
+            console.WriteLine(GetLineReport(result).ToMessage(verbose: false));
             var lines = result.Errors.Select(e => e.Red().Indent(2));
-            console.WriteLines(lines);
+            console.WriteLine(lines.ToMessage());
         }
 
-        public static void WriteEmptyResult(this IConsoleWriter console) => console.WriteLine("Nothing found.".Indent(2));
+        public static void WriteEmptyResult(this IConsoleWriter console) => console.WriteLine("Nothing found.".Indent(2).ToMessage(verbose: false));
 
-        public static void WriteSummary(this IConsoleWriter console, FilePurgeInfo result) => console.WriteLine(GetSummary(result));
+        public static void WriteSummary(this IConsoleWriter console, FilePurgeInfo result) => console.WriteLine(GetSummary(result).ToMessage());
 
         private static string GetLineReport(FilePurgeInfo result)
         {
@@ -60,22 +60,22 @@ namespace Nukit.Clearance
         {
             var found = result switch
             {
-                { Found: 0 } => $"Found: {result.Found.ToString().Yellow()}",
-                _ => $"Found: {result.Found.ToString().Cyan()}"
+                { Found: 0 } => result.Found.ToString().Yellow(),
+                _ => result.Found.ToString().Cyan()
             };
 
             var deleted = result switch
             {
-                { Deleted: 0 } => $"Deleted: {result.Deleted.ToString().Yellow()}",
-                _ => $"Deleted: {result.Deleted.ToString().Green()}",
+                { Deleted: 0 } => result.Deleted.ToString().Yellow(),
+                _ => result.Deleted.ToString().Green(),
             };
             var errors = result switch
             {
-                { Errors.Count: > 0 } => $"Errors: {result.Errors.Count.ToString().Red()}",
-                _ => $"Errors: {result.Errors.Count.ToString().Yellow()}",
+                { Errors.Count: > 0 } => result.Errors.Count.ToString().Red(),
+                _ => result.Errors.Count.ToString().Yellow(),
             };
 
-            return "Nuke summary: ".Yellow() + $"{found} {deleted} {errors}";
+            return "Nuked: ".Yellow() + $"{found} found, {deleted} deleted, {errors} errors";
         }
     }
 }

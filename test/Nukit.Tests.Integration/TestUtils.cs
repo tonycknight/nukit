@@ -136,9 +136,9 @@ namespace Nukit.Tests.Integration
         public static ProcessExecution VerifyNukitSummary(this ProcessExecution result, int found, int deleted, int errors)
         {
             var reportLine = result.OutLog.Split(Environment.NewLine, StringSplitOptions.TrimEntries)
-                .Single(s => s.StartsWith("Nuke summary: "));
+                .Single(s => s.StartsWith("Nuked: "));
 
-            var pattern = @"Nuke summary: Found:\s*(\d+)\s+Deleted:\s*(\d+)\s+Errors:\s*(\d+)";
+            var pattern = @"Nuked: \s*(\d+)\s+found, \s*(\d+)\s+deleted, \s*(\d+)\s+errors";
             var match = Regex.Match(reportLine, pattern);
 
             int.Parse(match.Groups[1].Value).ShouldBe(found);
