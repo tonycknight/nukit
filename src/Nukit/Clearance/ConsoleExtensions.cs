@@ -60,22 +60,22 @@ namespace Nukit.Clearance
         {
             var found = result switch
             {
-                { Found: 0 } => $"Found: {result.Found.ToString().Yellow()}",
-                _ => $"Found: {result.Found.ToString().Cyan()}"
+                { Found: 0 } => result.Found.ToString().Yellow(),
+                _ => result.Found.ToString().Cyan()
             };
 
             var deleted = result switch
             {
-                { Deleted: 0 } => $"Deleted: {result.Deleted.ToString().Yellow()}",
-                _ => $"Deleted: {result.Deleted.ToString().Green()}",
+                { Deleted: 0 } => result.Deleted.ToString().Yellow(),
+                _ => result.Deleted.ToString().Green(),
             };
             var errors = result switch
             {
-                { Errors.Count: > 0 } => $"Errors: {result.Errors.Count.ToString().Red()}",
-                _ => $"Errors: {result.Errors.Count.ToString().Yellow()}",
+                { Errors.Count: > 0 } => result.Errors.Count.ToString().Red(),
+                _ => result.Errors.Count.ToString().Yellow(),
             };
 
-            return "Nuke summary: ".Yellow() + $"{found} {deleted} {errors}";
+            return "Nuked: ".Yellow() + $"{found} found, {deleted} deleted, {errors} errors";
         }
     }
 }
